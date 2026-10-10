@@ -1,0 +1,6 @@
+@TenderDashboard.Api_HostAddress = http://localhost:5263
+
+GET {{TenderDashboard.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

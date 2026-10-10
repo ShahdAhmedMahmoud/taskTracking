@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="لوحة متابعة مهام العطاءات">
+  <meta name="theme-color" content="#0b1f33">
+  <title>لوحة متابعة العطاءات</title>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="titleblock">
+      <div class="tb-top">
+        <div class="tb-brand">
+          <div class="tb-logo-box" aria-hidden="true"><img src="/assets/logo.png" alt=""></div>
+          <div>
+            <div class="tb-title">لوحة متابعة العطاءات</div>
+            <div class="tb-sub">متابعة دراسة وتسعير المشاريع من كراسة الشروط حتى الترسية</div>
+          </div>
+        </div>
+        <div class="tb-dept"><span id="deptRoleLabel">جاري التحقق من البيانات</span><b id="deptManagerName">—</b></div>
+      </div>
+      <div class="tb-strip" id="companyStrip"></div>
+    </header>
+
+    <section id="app" aria-live="polite">
+      <div class="loading">جاري تحميل بيانات النظام من الخادم…</div>
+    </section>
+
+    <p class="note">جميع بيانات الفرق والمهندسين والمشاريع والمهام تُقرأ وتُحفظ عبر الخادم في قاعدة البيانات.</p>
+  </main>
+
+  <div class="save-flash" id="saveFlash" role="status"></div>
+
+  <div class="modal-overlay hidden" id="pwModal">
+    <div class="modal-box">
+      <h3>تغيير كلمة المرور</h3>
+      <div class="field"><label for="pw-old">كلمة المرور الحالية</label><input type="password" id="pw-old"></div>
+      <div class="field"><label for="pw-new1">كلمة المرور الجديدة</label><input type="password" id="pw-new1"></div>
+      <div class="field"><label for="pw-new2">تأكيد كلمة المرور الجديدة</label><input type="password" id="pw-new2"></div>
+      <div id="pw-error" class="modal-error"></div>
+      <div class="modal-actions">
+        <button class="btn ghost" onclick="closePwModal()">إلغاء</button>
+        <button class="btn primary" onclick="submitChangePassword()">حفظ كلمة المرور</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>
