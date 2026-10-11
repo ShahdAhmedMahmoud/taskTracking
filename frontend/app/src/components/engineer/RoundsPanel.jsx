@@ -44,32 +44,32 @@ export default function RoundsPanel({ project, edit, delay = 0, className = '' }
       )}
     >
       {rounds.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 px-4 py-9 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-neutral-200 px-4 py-9 text-center">
           <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600"><LayersIcon className="h-6 w-6" /></span>
           <p className="font-bold">لسه مفيش جولات</p>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-400">
+          <p className="max-w-sm text-sm leading-relaxed text-neutral-400">
             العطاء ممكن يتسلّم أكتر من مرة: عرض أولي، رد على استفسارات، عرض معدّل. ضيفي كل مرة كجولة، وعلّمي عليها «تم التسليم» لما تتسلّم.
           </p>
           <button type="button" onClick={add} className="btn-primary">إضافة أول جولة</button>
         </div>
       ) : (
         <>
-          <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
-            <div className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-brand-600 transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: `${pct}%` }} />
+          <div className="mb-5 h-2 overflow-hidden rounded-full bg-neutral-100" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
+            <div className="h-full rounded-full bg-gradient-to-l from-brand-400 to-brand-600 transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: `${pct}%` }} />
           </div>
 
-          <ol className="relative space-y-4 ps-10 before:absolute before:inset-y-4 before:start-[15px] before:w-0.5 before:rounded-full before:bg-slate-100">
+          <ol className="relative space-y-4 ps-10 before:absolute before:inset-y-4 before:start-[15px] before:w-0.5 before:rounded-full before:bg-neutral-100">
             {rounds.map((r, i) => (
               <li key={r.id} className="relative animate-rise" style={{ animationDelay: `${Math.min(i, 6) * 60}ms` }}>
                 <button
                   type="button" onClick={() => toggle(r)} aria-pressed={!!r.delivered}
                   aria-label={r.delivered ? 'إلغاء تعليم الجولة كمسلّمة' : 'تعليم الجولة كمسلّمة'}
-                  className={`absolute -start-10 top-3 grid h-8 w-8 place-items-center rounded-full ring-2 transition-all duration-500 motion-reduce:transition-none ${r.delivered ? 'scale-110 bg-emerald-500 text-white ring-emerald-200' : 'bg-white text-slate-400 ring-slate-200 hover:ring-brand-300'}`}
+                  className={`absolute -start-10 top-3 grid h-8 w-8 place-items-center rounded-full ring-2 transition-all duration-500 motion-reduce:transition-none ${r.delivered ? 'scale-110 bg-brand-600 text-white ring-brand-200' : 'bg-white text-neutral-400 ring-neutral-200 hover:ring-brand-300'}`}
                 >
                   {r.delivered ? <TickIcon className="h-4 w-4" /> : <span className="text-xs font-extrabold">{n(i + 1)}</span>}
                 </button>
 
-                <div className={`rounded-2xl border p-3.5 transition duration-300 ${r.delivered ? 'border-emerald-100 bg-emerald-50/50' : 'border-slate-100 bg-white hover:border-brand-200'}`}>
+                <div className={`rounded-2xl border p-3.5 transition duration-300 ${r.delivered ? 'border-brand-200 bg-brand-50/50' : 'border-neutral-100 bg-white hover:border-brand-200'}`}>
                   <div className="flex flex-wrap items-center gap-2">
                     <input
                       key={`${r.id}t`} className="input min-w-0 flex-1 basis-40 font-bold" defaultValue={r.title} aria-label="اسم الجولة"
@@ -81,11 +81,11 @@ export default function RoundsPanel({ project, edit, delay = 0, className = '' }
                     />
                     <button
                       type="button" onClick={() => toggle(r)}
-                      className={`rounded-xl px-3 py-2 text-sm font-bold ring-1 transition duration-300 ${r.delivered ? 'bg-emerald-50 text-emerald-700 ring-emerald-300' : 'bg-white text-slate-500 ring-slate-200 hover:bg-slate-50'}`}
+                      className={`rounded-xl px-3 py-2 text-sm font-bold ring-1 transition duration-300 ${r.delivered ? 'bg-brand-50 text-brand-700 ring-brand-300' : 'bg-white text-neutral-500 ring-neutral-200 hover:bg-neutral-50'}`}
                     >
                       {r.delivered ? '✓ تم التسليم' : 'تم التسليم؟'}
                     </button>
-                    <button type="button" onClick={() => remove(r)} aria-label="حذف الجولة" className="grid h-9 w-9 place-items-center rounded-full text-slate-300 transition hover:bg-rose-50 hover:text-rose-500">
+                    <button type="button" onClick={() => remove(r)} aria-label="حذف الجولة" className="grid h-9 w-9 place-items-center rounded-full text-neutral-300 transition hover:bg-brand-50 hover:text-brand-500">
                       <TrashIcon className="h-4 w-4" />
                     </button>
                   </div>
@@ -94,7 +94,7 @@ export default function RoundsPanel({ project, edit, delay = 0, className = '' }
                     key={`${r.id}n`} className="input mt-2" defaultValue={r.note || ''} placeholder="ملحوظة على الجولة (اختياري)" aria-label="ملحوظة الجولة"
                     onBlur={(e) => e.target.value !== (r.note || '') && patch(r.id, (x) => { x.note = e.target.value; })}
                   />
-                  {r.delivered && r.deliveredAt && <p className="mt-2 text-xs font-semibold text-emerald-700">اتسلّمت يوم {fmt(r.deliveredAt)}</p>}
+                  {r.delivered && r.deliveredAt && <p className="mt-2 text-xs font-semibold text-brand-700">اتسلّمت يوم {fmt(r.deliveredAt)}</p>}
                 </div>
               </li>
             ))}

@@ -40,22 +40,22 @@ export default function AreaChart({ data, height = 240, unit = 'مشروع' }) {
           style={{ clipPath: ready ? 'inset(-10% 0 0 0)' : 'inset(-10% 0 0 100%)', transition: 'clip-path 1.2s cubic-bezier(.22,1,.36,1)' }}>
           <defs>
             <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#1fa08c" stopOpacity=".35" />
-              <stop offset="100%" stopColor="#1fa08c" stopOpacity="0" />
+              <stop offset="0%" stopColor="#2A317A" stopOpacity=".35" />
+              <stop offset="100%" stopColor="#2A317A" stopOpacity="0" />
             </linearGradient>
           </defs>
           {[0.25, 0.5, 0.75].map((f) => (
-            <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} stroke="#e2e8f0" strokeDasharray="2 3" vectorEffect="non-scaling-stroke" />
+            <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} stroke="#e1e1e0" strokeDasharray="2 3" vectorEffect="non-scaling-stroke" />
           ))}
           <path d={area} fill={`url(#${gid})`} />
-          <path d={line} fill="none" stroke="#118173" strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <path d={line} fill="none" stroke="#2A317A" strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
         </svg>
 
         {hp && (
           <>
             <span className="pointer-events-none absolute top-0 h-full w-px bg-brand-300/60" style={{ left: `${hp.x}%` }} />
             <span className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-brand-600 bg-white shadow" style={{ left: `${hp.x}%`, top: `${(hp.y / H) * 100}%` }} />
-            <span className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-xl bg-slate-900 px-3 py-1.5 text-sm font-bold text-white shadow-lift" style={{ left: `${Math.min(Math.max(hp.x, 12), 88)}%`, top: `calc(${(hp.y / H) * 100}% - 14px)` }}>
+            <span className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-xl border border-brand-200 bg-white px-3 py-1.5 text-sm font-bold text-neutral-800 shadow-lift" style={{ left: `${Math.min(Math.max(hp.x, 12), 88)}%`, top: `calc(${(hp.y / H) * 100}% - 14px)` }}>
               {data[hover].label}: {data[hover].value.toLocaleString('ar-EG')} {unit}
             </span>
           </>
@@ -64,7 +64,7 @@ export default function AreaChart({ data, height = 240, unit = 'مشروع' }) {
 
       <div className="mt-3 flex justify-between">
         {data.map((d, i) => (
-          <span key={i} className={`flex-1 text-center text-sm font-bold ${d.current ? 'text-brand-700' : 'text-slate-400'}`}>{d.label}</span>
+          <span key={i} className={`flex-1 text-center text-sm font-bold ${d.current ? 'text-brand-700' : 'text-neutral-400'}`}>{d.label}</span>
         ))}
       </div>
     </div>

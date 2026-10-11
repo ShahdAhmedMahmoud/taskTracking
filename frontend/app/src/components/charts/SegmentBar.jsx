@@ -14,7 +14,7 @@ export default function SegmentBar({ segments, hints = {} }) {
   return (
     <div>
       <div className="flex h-14 gap-1.5 sm:h-16" onMouseLeave={() => setActive(null)}>
-        {total === 0 && <div className="flex-1 rounded-2xl bg-slate-100" />}
+        {total === 0 && <div className="flex-1 rounded-2xl bg-neutral-100" />}
         {segments.map((s, i) => (s.value > 0 && (
           <button
             key={s.key} type="button"
@@ -35,15 +35,15 @@ export default function SegmentBar({ segments, hints = {} }) {
           <div
             key={s.key}
             onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)}
-            className={`rounded-2xl border p-4 transition duration-300 ${active === i ? '-translate-y-1 border-transparent shadow-lift' : 'border-slate-100'} ${active !== null && active !== i ? 'opacity-60' : ''}`}
+            className={`rounded-2xl border p-4 transition duration-300 ${active === i ? '-translate-y-1 border-transparent shadow-lift' : 'border-neutral-100'} ${active !== null && active !== i ? 'opacity-60' : ''}`}
             style={active === i ? { boxShadow: `0 14px 30px -12px ${s.color}88` } : undefined}
           >
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full" style={{ background: s.color }} />
-              <span className="text-sm font-bold text-slate-600">{s.label}</span>
+              <span className="text-sm font-bold text-neutral-600">{s.label}</span>
             </div>
-            <p className="mt-2 text-3xl font-extrabold tabular-nums text-slate-900">{n(s.value)}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-400">
+            <p className="mt-2 text-3xl font-extrabold tabular-nums text-neutral-900">{n(s.value)}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-neutral-400">
               {total ? `${n(Math.round((s.value / total) * 100))}%` : '—'}{hints[s.key] ? ` · ${hints[s.key]}` : ''}
             </p>
           </div>

@@ -86,10 +86,10 @@ export default function LoginPage() {
     `group relative flex w-full items-center gap-3 rounded-2xl border p-3 text-start text-sm font-bold transition
      ${active
        ? 'border-brand-500 bg-brand-50 text-brand-800 shadow-soft ring-4 ring-brand-500/10'
-       : 'border-slate-200 bg-white text-slate-700 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-soft'}`;
+       : 'border-neutral-200 bg-white text-neutral-700 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-soft'}`;
 
   const Tick = ({ on }) => (
-    <span className={`ms-auto grid h-5 w-5 shrink-0 place-items-center rounded-full transition ${on ? 'bg-brand-600 text-white' : 'border border-slate-200 text-transparent group-hover:border-brand-300'}`}>
+    <span className={`ms-auto grid h-5 w-5 shrink-0 place-items-center rounded-full transition ${on ? 'bg-brand-600 text-white' : 'border border-neutral-200 text-transparent group-hover:border-brand-300'}`}>
       {icons.check}
     </span>
   );
@@ -97,32 +97,32 @@ export default function LoginPage() {
   return (
     <div className="grid min-h-screen bg-surface lg:grid-cols-[1.05fr_1fr]">
       {/* ================= اللوحة الجانبية (ديسكتوب) ================= */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-brand-700 via-brand-600 to-emerald-500 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -start-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -end-16 h-[28rem] w-[28rem] rounded-full bg-cyan-300/20 blur-3xl" />
-        <div className="pointer-events-none absolute inset-0 opacity-[.07]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+      <aside className="relative hidden overflow-hidden border-e border-neutral-200/80 bg-gradient-to-br from-white via-brand-50/70 to-brand-100/50 p-12 text-neutral-800 lg:flex lg:flex-col lg:justify-between">
+        <div className="pointer-events-none absolute -start-24 -top-24 h-96 w-96 rounded-full bg-brand-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -end-16 h-[28rem] w-[28rem] rounded-full bg-brand-300/20 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-[.03]" style={{ backgroundImage: 'radial-gradient(#2A317A 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
 
         <div className="relative flex items-center gap-3">
-          <img src="/assets/logo.png" alt="logo" className="h-12 w-12 rounded-2xl bg-white object-contain p-2 shadow-lift" onError={(e) => (e.currentTarget.style.display = 'none')} />
-          <span className="text-lg font-extrabold tracking-tight">لوحة متابعة العطاءات</span>
+          <img src="/assets/logo.png" alt="logo" className="h-12 w-12 rounded-2xl bg-white object-contain p-2 shadow-soft ring-1 ring-brand-100" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <span className="text-lg font-extrabold tracking-tight text-brand-900">لوحة متابعة العطاءات</span>
         </div>
 
         <div className="relative max-w-lg">
-          <h1 className="text-4xl font-extrabold leading-[1.35] xl:text-5xl xl:leading-[1.3]">
+          <h1 className="text-4xl font-extrabold leading-[1.35] text-brand-900 xl:text-5xl xl:leading-[1.3]">
             من كراسة الشروط<br />
-            <span className="text-emerald-200">لحد الترسية</span>، بخطوات واضحة.
+            <span className="text-brand-600">لحد الترسية</span>، بخطوات واضحة.
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-white/80">
+          <p className="mt-4 text-base leading-relaxed text-[#3C3C3B]">
             تابعي تقدّم الفرق والمهندسين والمشاريع وقسم الحصر في مكان واحد، لحظة بلحظة.
           </p>
 
           <ul className="mt-8 space-y-3">
             {FEATURES.map(([icon, title, desc], i) => (
-              <li key={title} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3.5 backdrop-blur-sm animate-rise" style={{ animationDelay: `${i * 120}ms` }}>
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/15">{icon}</span>
+              <li key={title} className="flex items-start gap-3 rounded-2xl border border-brand-100 bg-white/80 p-3.5 shadow-xs backdrop-blur-sm animate-rise" style={{ animationDelay: `${i * 120}ms` }}>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-700">{icon}</span>
                 <div>
-                  <p className="text-sm font-extrabold">{title}</p>
-                  <p className="text-xs leading-relaxed text-white/70">{desc}</p>
+                  <p className="text-sm font-extrabold text-brand-900">{title}</p>
+                  <p className="text-xs leading-relaxed text-neutral-500">{desc}</p>
                 </div>
               </li>
             ))}
@@ -130,13 +130,13 @@ export default function LoginPage() {
         </div>
 
         {/* كارت عائم للزينة */}
-        <div className="pointer-events-none absolute bottom-24 end-10 hidden w-44 rounded-2xl bg-white p-4 text-slate-800 shadow-lift animate-floaty xl:block">
-          <p className="text-xs font-bold text-slate-400">نسبة الإنجاز</p>
+        <div className="pointer-events-none absolute bottom-24 end-10 hidden w-44 rounded-2xl border border-brand-100 bg-white p-4 text-neutral-800 shadow-lift animate-floaty xl:block">
+          <p className="text-xs font-bold text-neutral-400">نسبة الإنجاز</p>
           <p className="mt-0.5 text-2xl font-extrabold text-brand-700">82%</p>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[82%] rounded-full bg-gradient-to-l from-emerald-400 to-brand-600" /></div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-neutral-100"><div className="h-full w-[82%] rounded-full bg-gradient-to-l from-brand-400 to-brand-600" /></div>
         </div>
 
-        <p className="relative text-xs text-white/60">© لوحة متابعة العطاءات</p>
+        <p className="relative text-xs text-neutral-400">© لوحة متابعة العطاءات</p>
       </aside>
 
       {/* ================= نموذج الدخول ================= */}
@@ -152,12 +152,12 @@ export default function LoginPage() {
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">{icons.lock}</span>
             <div>
               <h2 className="text-xl font-extrabold sm:text-2xl">تسجيل الدخول</h2>
-              <p className="text-xs text-slate-500 sm:text-sm">اختاري صفتك، ثم اسمك، ثم أدخلي كلمة المرور.</p>
+              <p className="text-xs text-neutral-500 sm:text-sm">اختاري صفتك، ثم اسمك، ثم أدخلي كلمة المرور.</p>
             </div>
           </div>
 
           {/* تبويب الدور */}
-          <div role="tablist" className="mt-6 grid grid-cols-3 gap-1 rounded-2xl bg-slate-100 p-1">
+          <div role="tablist" className="mt-6 grid grid-cols-3 gap-1 rounded-2xl bg-neutral-100 p-1">
             {ROLES.map(([r, label, icon]) => (
               <button
                 key={r}
@@ -165,7 +165,7 @@ export default function LoginPage() {
                 aria-selected={role === r}
                 onClick={() => pick(r)}
                 className={`flex flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-xs font-bold transition sm:flex-row sm:gap-2 sm:text-sm
-                  ${role === r ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                  ${role === r ? 'bg-white text-brand-700 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'}`}
               >
                 {icon}{label}
               </button>
@@ -175,7 +175,7 @@ export default function LoginPage() {
           {/* بحث (للمهندسين فقط) */}
           {role === 'engineer' && (
             <div className="relative mt-4">
-              <span className="pointer-events-none absolute inset-y-0 start-3 grid place-items-center text-slate-400">{icons.search}</span>
+              <span className="pointer-events-none absolute inset-y-0 start-3 grid place-items-center text-neutral-400">{icons.search}</span>
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي باسم المهندس..." className="input ps-9" />
             </div>
           )}
@@ -185,7 +185,7 @@ export default function LoginPage() {
             {role === 'engineer' && (
               engineerGroups.length ? engineerGroups.map((t) => (
                 <section key={t.id}>
-                  <div className="mb-2 flex items-center gap-2 text-xs font-extrabold text-slate-400">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-extrabold text-neutral-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
                     {teamLabel(t)} — {t.manager}
                   </div>
@@ -199,7 +199,7 @@ export default function LoginPage() {
                     ))}
                   </div>
                 </section>
-              )) : <p className="py-8 text-center text-sm text-slate-400">مفيش نتائج مطابقة 🔍</p>
+              )) : <p className="py-8 text-center text-sm text-neutral-400">مفيش نتائج مطابقة 🔍</p>
             )}
 
             {role === 'team' && (
@@ -209,7 +209,7 @@ export default function LoginPage() {
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-100 text-brand-700">{icons.team}</span>
                     <span className="min-w-0">
                       <span className="block truncate">{teamLabel(t)}</span>
-                      <span className="block truncate text-xs font-semibold text-slate-400">{t.manager}</span>
+                      <span className="block truncate text-xs font-semibold text-neutral-400">{t.manager}</span>
                     </span>
                     <Tick on={id === t.id} />
                   </button>
@@ -222,7 +222,7 @@ export default function LoginPage() {
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-100 text-brand-700">{icons.dept}</span>
                 <span className="min-w-0">
                   <span className="block">مدير القسم</span>
-                  <span className="block truncate text-xs font-semibold text-slate-400">{deptManager}</span>
+                  <span className="block truncate text-xs font-semibold text-neutral-400">{deptManager}</span>
                 </span>
                 <Tick on={id === 'dept'} />
               </button>
@@ -239,20 +239,20 @@ export default function LoginPage() {
 
             {forgot ? (
               <>
-                <p className="text-xs leading-relaxed text-slate-500">استرجاع كلمة المرور يحتاج تأكيد كلمة مرور مدير القسم.</p>
+                <p className="text-xs leading-relaxed text-neutral-500">استرجاع كلمة المرور يحتاج تأكيد كلمة مرور مدير القسم.</p>
                 <div><label className="label">كلمة مرور مدير القسم</label><input name="dept" type="password" className="input" autoFocus /></div>
               </>
             ) : hasHash ? (
               <div><label className="label">كلمة المرور</label><input name="p1" type="password" className="input" autoFocus autoComplete="current-password" /></div>
             ) : (
               <>
-                <p className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">أول دخول لهذا الحساب — اختاري كلمة مرور جديدة (4 حروف/أرقام على الأقل).</p>
+                <p className="rounded-xl bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700">أول دخول لهذا الحساب — اختاري كلمة مرور جديدة (4 حروف/أرقام على الأقل).</p>
                 <div><label className="label">كلمة المرور الجديدة</label><input name="p1" type="password" className="input" autoFocus autoComplete="new-password" /></div>
                 <div><label className="label">تأكيد كلمة المرور</label><input name="p2" type="password" className="input" autoComplete="new-password" /></div>
               </>
             )}
 
-            {error && <p role="alert" className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-bold text-rose-600">⚠ {error}</p>}
+            {error && <p role="alert" className="rounded-xl bg-brand-50 px-3 py-2 text-sm font-bold text-brand-600">⚠ {error}</p>}
 
             <button className="btn-primary w-full" disabled={busy}>
               {busy ? 'جاري التنفيذ...' : forgot ? 'تأكيد وإعادة التعيين' : hasHash ? 'دخول' : 'إنشاء الحساب والدخول'}

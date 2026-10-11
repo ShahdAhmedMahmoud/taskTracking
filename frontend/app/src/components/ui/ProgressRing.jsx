@@ -22,11 +22,11 @@ export default function ProgressRing({ pct = 0, size = 96, stroke = 10, tone = '
       <svg width={size} height={size} className="-rotate-90" role="img" aria-label={`${clamped}%`}>
         <defs>
           <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="100%" stopColor="#118173" />
+            <stop offset="0%" stopColor="#5059A5" />
+            <stop offset="100%" stopColor="#2A317A" />
           </linearGradient>
         </defs>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} stroke={light ? 'rgba(255,255,255,.22)' : '#e2e8f0'} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} stroke={light ? 'rgba(255,255,255,.22)' : '#E4E6F4'} />
         <circle
           cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} strokeLinecap="round"
           stroke={light ? '#ffffff' : `url(#${gid})`}
@@ -34,7 +34,7 @@ export default function ProgressRing({ pct = 0, size = 96, stroke = 10, tone = '
           style={{ transition: 'stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)' }}
         />
       </svg>
-      <span className={`absolute inset-0 grid place-items-center text-lg font-extrabold tabular-nums ${light ? 'text-white' : 'text-slate-800'}`} style={{ fontSize: size * 0.24 }}>
+      <span className={`absolute inset-0 grid place-items-center text-lg font-extrabold tabular-nums ${light ? 'text-white' : 'text-brand-900'}`} style={{ fontSize: size * 0.24 }}>
         {value.toLocaleString('ar-EG')}%
       </span>
     </div>

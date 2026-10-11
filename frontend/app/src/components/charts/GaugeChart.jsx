@@ -18,7 +18,7 @@ export default function GaugeChart({ segments, size = 280, stroke = 30, centerVa
   return (
     <div className="relative mx-auto" style={{ width: size, maxWidth: '100%' }}>
       <svg viewBox={`0 0 ${size} ${h}`} className="w-full">
-        <path d={d} fill="none" stroke="#eef2f1" strokeWidth={stroke} />
+        <path d={d} fill="none" stroke="#f2f3fa" strokeWidth={stroke} />
         {total > 0 && segments.map((s) => {
           const len = (s.value / total) * 100;
           const dash = ready ? Math.max(len - GAP, 0) : 0;
@@ -34,8 +34,8 @@ export default function GaugeChart({ segments, size = 280, stroke = 30, centerVa
         })}
       </svg>
       <div className="absolute inset-x-0 bottom-0 text-center">
-        <p className="text-5xl font-extrabold tabular-nums leading-none text-slate-900">{centerValue}</p>
-        {centerLabel && <p className="mt-1 text-sm font-semibold text-slate-400">{centerLabel}</p>}
+        <p className="text-5xl font-extrabold tabular-nums leading-none text-neutral-900">{centerValue}</p>
+        {centerLabel && <p className="mt-1 text-sm font-semibold text-neutral-400">{centerLabel}</p>}
       </div>
     </div>
   );

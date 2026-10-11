@@ -87,33 +87,33 @@ export default function EngineerPage() {
   };
 
   const hero = (
-    <section className="relative mb-5 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 p-5 text-white shadow-lift animate-rise sm:p-7">
-      <div className="pointer-events-none absolute -start-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 end-10 h-64 w-64 rounded-full bg-emerald-300/20 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 opacity-[.07]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+    <section className="relative mb-5 overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50/70 to-brand-100/50 p-5 text-neutral-800 shadow-soft animate-rise sm:p-7">
+      <div className="pointer-events-none absolute -start-16 -top-16 h-64 w-64 rounded-full bg-brand-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 end-10 h-64 w-64 rounded-full bg-brand-300/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-[.03]" style={{ backgroundImage: 'radial-gradient(#2A317A 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
 
       <div className="relative flex flex-wrap items-center gap-5">
-        <div className="rounded-full p-1 ring-2 ring-white/30"><Avatar engineer={eng} size={76} /></div>
+        <div className="rounded-full p-1 ring-2 ring-brand-200"><Avatar engineer={eng} size={76} /></div>
 
         <div className="min-w-0 flex-1 basis-56">
-          <h1 className="truncate text-2xl font-extrabold sm:text-3xl">{session.role === 'engineer' ? `مهامي — ${eng.name}` : eng.name}</h1>
-          <p className="mt-1 text-sm text-white/75">{teamLabel(team)} · مدير الفريق: {team.manager}</p>
-          <p className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ring-1 transition-colors duration-500 ${isDirty ? 'bg-amber-400/20 text-amber-100 ring-amber-300/40' : 'bg-emerald-400/20 text-emerald-100 ring-emerald-300/40'}`}>
-            <span className={`h-2 w-2 rounded-full ${isDirty ? 'animate-pulse bg-amber-300' : 'bg-emerald-300'}`} />
+          <h1 className="truncate text-2xl font-extrabold text-brand-900 sm:text-3xl">{session.role === 'engineer' ? `مهامي — ${eng.name}` : eng.name}</h1>
+          <p className="mt-1 text-sm text-[#3C3C3B]">{teamLabel(team)} · مدير الفريق: {team.manager}</p>
+          <p className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ring-1 transition-colors duration-500 ${isDirty ? 'bg-brand-50 text-brand-600 ring-brand-300' : 'bg-brand-50 text-brand-800 ring-brand-200'}`}>
+            <span className={`h-2 w-2 rounded-full ${isDirty ? 'animate-pulse bg-brand-500' : 'bg-brand-600'}`} />
             {isDirty ? 'يوجد تغييرات لم تُحفظ' : `تم الحفظ · ${timeAgo(data.lastSaved)}`}
           </p>
         </div>
 
         <div className="grid w-full grid-cols-3 gap-2 sm:w-auto">
           {[['جارية', running], ['فوز', won], ['نسبة الفوز', winPct]].map(([l, v]) => (
-            <div key={l} className="rounded-2xl bg-white/10 px-4 py-2.5 text-center ring-1 ring-white/15 backdrop-blur">
-              <p className="text-2xl font-extrabold tabular-nums">{typeof v === 'number' ? n(v) : v}</p>
-              <p className="text-xs font-semibold text-white/70">{l}</p>
+            <div key={l} className="rounded-2xl bg-white/80 px-4 py-2.5 text-center ring-1 ring-brand-100 shadow-xs backdrop-blur">
+              <p className="text-2xl font-extrabold tabular-nums text-brand-900">{typeof v === 'number' ? n(v) : v}</p>
+              <p className="text-xs font-semibold text-neutral-500">{l}</p>
             </div>
           ))}
         </div>
 
-        <button type="button" onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-brand-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-brand-50 disabled:opacity-60 sm:w-auto">
+        <button type="button" onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-extrabold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 disabled:opacity-60 sm:w-auto">
           <SaveIcon className="h-4 w-4" />{saving ? 'جاري الحفظ…' : 'حفظ الآن'}
         </button>
       </div>
@@ -123,10 +123,10 @@ export default function EngineerPage() {
   /* ---------- شريط الحفظ العايم ---------- */
   const floatingSave = (
     <div aria-live="polite" className={`pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 transition-all duration-500 motion-reduce:transition-none ${isDirty ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0'}`}>
-      <div className="pointer-events-auto flex items-center gap-3 rounded-2xl bg-slate-900/95 py-2.5 pe-2.5 ps-4 text-sm font-bold text-white shadow-lift backdrop-blur">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-amber-300" />
+      <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-brand-200 bg-white/95 py-2.5 pe-2.5 ps-4 text-sm font-bold text-neutral-800 shadow-lift backdrop-blur">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-brand-500" />
         تغييرات لم تُحفظ
-        <button type="button" onClick={save} disabled={saving || !isDirty} tabIndex={isDirty ? 0 : -1} className="rounded-xl bg-white px-4 py-2 font-extrabold text-brand-800 transition hover:bg-brand-50 disabled:opacity-60">
+        <button type="button" onClick={save} disabled={saving || !isDirty} tabIndex={isDirty ? 0 : -1} className="rounded-xl bg-brand-600 px-4 py-2 font-extrabold text-white transition hover:bg-brand-700 disabled:opacity-60">
           {saving ? 'جاري الحفظ…' : 'حفظ'}
         </button>
       </div>
@@ -164,16 +164,16 @@ export default function EngineerPage() {
             <button
               key={p.id} type="button" role="tab" aria-selected={on} onClick={() => select(p.id)}
               style={{ animationDelay: `${Math.min(ti, 6) * 50}ms` }}
-              className={`animate-rise min-w-[12.5rem] max-w-[17rem] shrink-0 snap-start rounded-2xl p-3.5 text-start ring-1 transition duration-300 motion-reduce:transition-none ${on ? '-translate-y-0.5 bg-brand-600 text-white shadow-lift ring-brand-600' : 'bg-white ring-slate-200 hover:-translate-y-0.5 hover:shadow-soft hover:ring-brand-200'}`}
+              className={`animate-rise min-w-[12.5rem] max-w-[17rem] shrink-0 snap-start rounded-2xl p-3.5 text-start ring-1 transition duration-300 motion-reduce:transition-none ${on ? '-translate-y-0.5 bg-brand-600 text-white shadow-lift ring-brand-600' : 'bg-white ring-neutral-200 hover:-translate-y-0.5 hover:shadow-soft hover:ring-brand-200'}`}
             >
               <span className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-white/60" style={{ background: STATES[st].color }} />
                 <span className="truncate text-sm font-extrabold">{p.name || 'مشروع بدون اسم'}</span>
               </span>
-              <span className={`mt-2.5 block h-1.5 overflow-hidden rounded-full ${on ? 'bg-white/25' : 'bg-slate-100'}`}>
-                <span className={`block h-full rounded-full transition-[width] duration-700 ${on ? 'bg-white' : 'bg-gradient-to-l from-sky-300 to-brand-600'}`} style={{ width: `${pr.pct}%` }} />
+              <span className={`mt-2.5 block h-1.5 overflow-hidden rounded-full ${on ? 'bg-white/25' : 'bg-neutral-100'}`}>
+                <span className={`block h-full rounded-full transition-[width] duration-700 ${on ? 'bg-white' : 'bg-gradient-to-l from-brand-400 to-brand-600'}`} style={{ width: `${pr.pct}%` }} />
               </span>
-              <span className={`mt-1.5 block truncate text-xs font-semibold ${on ? 'text-white/80' : 'text-slate-400'}`}>
+              <span className={`mt-1.5 block truncate text-xs font-semibold ${on ? 'text-white/80' : 'text-neutral-400'}`}>
                 {n(pr.pct)}% · {STATES[st].label}{!p.finished && k !== null && k >= 0 ? ` · بعد ${n(k)} يوم` : ''}
               </span>
             </button>

@@ -44,23 +44,23 @@ export function projectProgress(p) {
 export const STATES = {
   running: {
     label: "جاري",
-    color: "#38bdf8",
-    pill: "bg-sky-50 text-sky-700 ring-sky-200",
+    color: "#414a9b",
+    pill: "bg-brand-50 text-brand-600 ring-brand-200",
   },
   pending: {
     label: "معلق",
-    color: "#fbbf24",
-    pill: "bg-amber-50 text-amber-700 ring-amber-200",
+    color: "#6f7dd0",
+    pill: "bg-brand-50 text-brand-600 ring-brand-200",
   },
   won: {
     label: "فوز",
-    color: "#10675d",
-    pill: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    color: "#2a317a",
+    pill: "bg-brand-50 text-brand-700 ring-brand-200",
   },
   lost: {
     label: "خسارة",
-    color: "#fb7185",
-    pill: "bg-rose-50 text-rose-600 ring-rose-200",
+    color: "#3c3c3b",
+    pill: "bg-brand-50 text-brand-600 ring-brand-200",
   },
 };
 

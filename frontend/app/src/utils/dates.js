@@ -23,11 +23,11 @@ export function timeAgo(iso) {
 }
 
 export const toneChip = {
-  red: 'bg-rose-50 text-rose-600 ring-rose-200',
-  rose: 'bg-rose-50 text-rose-600 ring-rose-200',
-  amber: 'bg-amber-50 text-amber-700 ring-amber-200',
-  green: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  slate: 'bg-slate-100 text-slate-600 ring-slate-200',
-  indigo: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
+  red: 'bg-brand-50 text-brand-600 ring-brand-200',
+  rose: 'bg-brand-50 text-brand-600 ring-brand-200',
+  amber: 'bg-brand-50 text-brand-600 ring-brand-200',
+  green: 'bg-brand-50 text-brand-700 ring-brand-200',
+  emerald: 'bg-brand-50 text-brand-700 ring-brand-200',
+  slate: 'bg-neutral-100 text-neutral-600 ring-neutral-200',
+  indigo: 'bg-brand-50 text-brand-700 ring-brand-200',
 };

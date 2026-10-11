@@ -8,7 +8,7 @@ export default function PageHeader({ title, subtitle, actions, back }) {
         {back && <button onClick={() => nav(-1)} className="btn-ghost !px-3" aria-label="رجوع">→</button>}
         <div className="min-w-0">
           <h1 className="truncate text-xl font-extrabold sm:text-2xl">{title}</h1>
-          {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
+          {subtitle && <p className="mt-0.5 text-sm text-neutral-500">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

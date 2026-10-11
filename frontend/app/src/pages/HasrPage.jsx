@@ -37,7 +37,7 @@ export default function HasrPage() {
         <StatCard icon="📥" label="الواردة" value={list.length} />
         <StatCard icon="⏳" label="لم يُحدد بعد" value={stat((x) => x.hasWork == null)} tone="amber" />
         <StatCard icon="🔧" label="جاري العمل" value={stat((x) => x.hasWork === true && !x.hasrDone)} tone="sky" />
-        <StatCard icon="✅" label="تم الحصر" value={stat((x) => x.hasWork === true && x.hasrDone)} tone="emerald" />
+        <StatCard icon="✅" label="تم الحصر" value={stat((x) => x.hasWork === true && x.hasrDone)} tone="brand" />
       </div>
 
       {list.length ? (
@@ -47,25 +47,25 @@ export default function HasrPage() {
             return (
               <div key={item.id} className="card animate-fade-up p-4">
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100 text-xs font-extrabold text-slate-500">{i + 1}</div>
-                  <div className="min-w-0 flex-1"><h4 className="truncate font-extrabold">{item.name}</h4><p className="text-xs text-slate-500">{item.addedBy && `أضافه: ${item.addedBy} · `}التسليم: {fmtDate(item.deliveryDate)}</p></div>
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-neutral-100 text-xs font-extrabold text-neutral-500">{i + 1}</div>
+                  <div className="min-w-0 flex-1"><h4 className="truncate font-extrabold">{item.name}</h4><p className="text-xs text-neutral-500">{item.addedBy && `أضافه: ${item.addedBy} · `}التسليم: {fmtDate(item.deliveryDate)}</p></div>
                   <span className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${toneChip[di.tone]}`}>{di.text}</span>
-                  <button onClick={() => remove(item)} className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600">🗑</button>
+                  <button onClick={() => remove(item)} className="rounded-lg p-2 text-neutral-400 hover:bg-brand-50 hover:text-brand-600">🗑</button>
                 </div>
-                <div className="mt-4 flex flex-wrap items-end gap-4 border-t border-slate-100 pt-4">
+                <div className="mt-4 flex flex-wrap items-end gap-4 border-t border-neutral-100 pt-4">
                   <div><span className="label">هل يوجد عمل حصر؟</span>
                     <div className="flex gap-2">
-                      <button onClick={() => upd(item.id, { hasWork: true })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasWork === true ? toneChip.emerald : 'bg-white text-slate-500 ring-slate-200'}`}>✓ نعم، يوجد عمل</button>
-                      <button onClick={() => upd(item.id, { hasWork: false, hasrDueDate: '' })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasWork === false ? toneChip.rose : 'bg-white text-slate-500 ring-slate-200'}`}>✗ لا يوجد عمل</button>
+                      <button onClick={() => upd(item.id, { hasWork: true })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasWork === true ? toneChip.emerald : 'bg-white text-neutral-500 ring-neutral-200'}`}>✓ نعم، يوجد عمل</button>
+                      <button onClick={() => upd(item.id, { hasWork: false, hasrDueDate: '' })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasWork === false ? toneChip.rose : 'bg-white text-neutral-500 ring-neutral-200'}`}>✗ لا يوجد عمل</button>
                     </div></div>
                   {item.hasWork === true && (
                     <>
                       <div><span className="label">ميعاد تسليم الحصر</span><input type="date" className="input" value={item.hasrDueDate || ''} onChange={(e) => upd(item.id, { hasrDueDate: e.target.value })} /></div>
                       <div><span className="label">حالة التنفيذ</span>
-                        <button onClick={() => upd(item.id, { hasrDone: !item.hasrDone })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasrDone ? toneChip.emerald : 'bg-white text-slate-500 ring-slate-200'}`}>{item.hasrDone ? '✅ تم الحصر — إلغاء' : '✓ تم الحصر'}</button></div>
+                        <button onClick={() => upd(item.id, { hasrDone: !item.hasrDone })} className={`rounded-xl px-3 py-2 text-xs font-bold ring-1 ${item.hasrDone ? toneChip.emerald : 'bg-white text-neutral-500 ring-neutral-200'}`}>{item.hasrDone ? '✅ تم الحصر — إلغاء' : '✓ تم الحصر'}</button></div>
                     </>
                   )}
-                  {item.hasWork == null && <span className="text-xs text-slate-400">⏳ لم يُحدد بعد</span>}
+                  {item.hasWork == null && <span className="text-xs text-neutral-400">⏳ لم يُحدد بعد</span>}
                   <div className="min-w-[220px] flex-1"><span className="label">ملاحظات (تظهر للمهندس المسؤول)</span>
                     <input key={item.id + (item.hasrNotes || '')} className="input" defaultValue={item.hasrNotes || ''} placeholder="اكتبي ملاحظتك هنا" onBlur={(e) => e.target.value !== (item.hasrNotes || '') && upd(item.id, { hasrNotes: e.target.value })} /></div>
                 </div>

@@ -39,7 +39,7 @@ export default function FilesPanel({ project, user }) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-extrabold">📎 مرفقات و T Files</h3>
-          <p className="text-xs text-slate-500">كل اللي هنا تابع للمشروع الحالي فقط.</p>
+          <p className="text-xs text-neutral-500">كل اللي هنا تابع للمشروع الحالي فقط.</p>
         </div>
         <div className="flex gap-2">
           <button className="btn-primary" onClick={() => setModal({ type: 'attachment' })}>+ مرفق</button>
@@ -50,38 +50,38 @@ export default function FilesPanel({ project, user }) {
       {!files ? <Loader text="جاري تحميل الملفات..." /> : (
         <div className="space-y-5">
           <div>
-            <h4 className="mb-2 text-sm font-extrabold text-slate-600">المرفقات</h4>
+            <h4 className="mb-2 text-sm font-extrabold text-neutral-600">المرفقات</h4>
             {(files.attachments || []).length ? (
               <div className="space-y-2">
                 {files.attachments.map((a) => (
-                  <div key={a.id} className="flex flex-col gap-2 rounded-xl bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div key={a.id} className="flex flex-col gap-2 rounded-xl bg-neutral-50 p-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <b className="block truncate text-sm">{a.attachmentName || a.originalFileName}</b>
-                      <span className="text-xs text-slate-500">{a.originalFileName} · {a.fileType} · {size(a.fileSize)} · إصدار {a.version}</span>
+                      <span className="text-xs text-neutral-500">{a.originalFileName} · {a.fileType} · {size(a.fileSize)} · إصدار {a.version}</span>
                     </div>
                     <FileActions name={a.originalFileName} url={a.downloadUrl} type={a.fileType}
                       onDelete={() => ask('حذف المرفق', `حذف "${a.attachmentName || a.originalFileName}" نهائيًا؟`, () => api.deleteAttachment(a.id, user), 'تم حذف المرفق')} />
                   </div>
                 ))}
               </div>
-            ) : <p className="text-sm text-slate-400">لا توجد مرفقات.</p>}
+            ) : <p className="text-sm text-neutral-400">لا توجد مرفقات.</p>}
           </div>
 
           <div>
-            <h4 className="mb-2 text-sm font-extrabold text-slate-600">T Files</h4>
+            <h4 className="mb-2 text-sm font-extrabold text-neutral-600">T Files</h4>
             {(files.tFiles || []).length ? (
               <div className="space-y-3">
                 {files.tFiles.map((t) => (
-                  <article key={t.id} className="rounded-2xl border border-slate-200 p-3">
+                  <article key={t.id} className="rounded-2xl border border-neutral-200 p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div><b>{t.name}</b><span className="ms-2 text-xs text-slate-500">{t.rounds?.length || 0} جولة · {t.createdBy}</span></div>
+                      <div><b>{t.name}</b><span className="ms-2 text-xs text-neutral-500">{t.rounds?.length || 0} جولة · {t.createdBy}</span></div>
                       <div className="flex gap-1.5">
                         <button className="btn-ghost !px-3 !py-1 !text-xs" onClick={() => setModal({ type: 'round', tFile: t })}>+ Round</button>
                         <button className="btn-danger !px-3 !py-1 !text-xs" onClick={() => ask('حذف T File', 'هيتحذف مع كل الـ Rounds والـ Versions. متأكدة؟', () => api.deleteTFile(t.id, user), 'تم الحذف')}>حذف</button>
                       </div>
                     </div>
                     {(t.rounds || []).map((r) => (
-                      <div key={r.id} className="mt-3 rounded-xl bg-slate-50 p-3">
+                      <div key={r.id} className="mt-3 rounded-xl bg-neutral-50 p-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <b className="text-sm">Round {r.roundNumber}: {r.name}</b>
                           <div className="flex gap-1.5">
@@ -91,19 +91,19 @@ export default function FilesPanel({ project, user }) {
                         </div>
                         <div className="mt-2 space-y-1.5">
                           {(r.versions || []).length ? r.versions.map((v) => (
-                            <div key={v.id} className={`flex flex-col gap-2 rounded-lg bg-white p-2 sm:flex-row sm:items-center sm:justify-between ${v.isCurrentVersion ? 'ring-1 ring-emerald-300' : ''}`}>
-                              <span className="text-xs text-slate-600">Version {v.versionNumber} · {v.originalFileName} · {size(v.fileSize)} {v.isCurrentVersion && <b className="text-emerald-600">· الحالية</b>}</span>
+                            <div key={v.id} className={`flex flex-col gap-2 rounded-lg bg-white p-2 sm:flex-row sm:items-center sm:justify-between ${v.isCurrentVersion ? 'ring-1 ring-brand-300' : ''}`}>
+                              <span className="text-xs text-neutral-600">Version {v.versionNumber} · {v.originalFileName} · {size(v.fileSize)} {v.isCurrentVersion && <b className="text-brand-600">· الحالية</b>}</span>
                               <FileActions name={v.originalFileName} url={v.downloadUrl} type={v.fileType}
                                 onDelete={() => ask('حذف Version', 'حذف هذه النسخة نهائيًا؟', () => api.deleteVersion(v.id, user), 'تم الحذف')} />
                             </div>
-                          )) : <p className="text-xs text-slate-400">لا توجد نسخ.</p>}
+                          )) : <p className="text-xs text-neutral-400">لا توجد نسخ.</p>}
                         </div>
                       </div>
                     ))}
                   </article>
                 ))}
               </div>
-            ) : <p className="text-sm text-slate-400">لا توجد T Files.</p>}
+            ) : <p className="text-sm text-neutral-400">لا توجد T Files.</p>}
           </div>
         </div>
       )}
@@ -133,7 +133,7 @@ export default function FilesPanel({ project, user }) {
             const src = `${modal.url}${modal.url.includes('?') ? '&' : '?'}inline=true`;
             if (['.png', '.jpg', '.jpeg', '.webp'].includes(modal.ext)) return <img src={src} alt={modal.name} className="mx-auto max-h-[70vh] rounded-xl" />;
             if (modal.ext === '.pdf') return <iframe src={src} title={modal.name} className="h-[70vh] w-full rounded-xl border" />;
-            return <div className="py-10 text-center"><p className="mb-3 text-slate-500">المعاينة غير متاحة لهذا النوع.</p><a className="btn-primary" href={modal.url} download>تنزيل الملف</a></div>;
+            return <div className="py-10 text-center"><p className="mb-3 text-neutral-500">المعاينة غير متاحة لهذا النوع.</p><a className="btn-primary" href={modal.url} download>تنزيل الملف</a></div>;
           })()}
         </Modal>
       )}

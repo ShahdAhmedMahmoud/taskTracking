@@ -14,7 +14,12 @@ import EngineerPage from './pages/EngineerPage';
 import HasrPage from './pages/HasrPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
-
+import ReportsPage from './pages/ReportsPage';
+import ManageTeamsPage from './pages/ManageTeamsPage';
+import AddEmployeePage from './pages/AddEmployeePage';
+import EmailSettingsPage from './pages/EmailSettingsPage';
+import ArchivesPage from './pages/ArchivesPage';
+import ActivityPage from './pages/ActivityPage';
 const only = (roles, el) => <RequireRole roles={roles}>{el}</RequireRole>;
 
 export default function App() {
@@ -28,7 +33,7 @@ export default function App() {
         <div className="card max-w-md p-8 text-center">
           <div className="text-4xl">🔌</div>
           <h2 className="mt-2 text-lg font-extrabold">تعذّر الاتصال ببيانات النظام</h2>
-          <p className="mt-1 text-sm text-slate-500">{status.error}</p>
+          <p className="mt-1 text-sm text-neutral-500">{status.error}</p>
           <button className="btn-primary mt-4" onClick={init}>إعادة المحاولة</button>
         </div>
       </div>
@@ -51,6 +56,12 @@ export default function App() {
         <Route path="/notifications" element={only(['engineer'], <NotificationsPage />)} />
         <Route path="/profile" element={<ProfilePage />} />
         {/* الدفعة 2: /reports /add-employee /master-data /email-settings /archives /manage-teams */}
+        <Route path="/reports" element={only(['dept'], <ReportsPage />)} />
+<Route path="/manage-teams" element={only(['dept'], <ManageTeamsPage />)} />
+<Route path="/add-employee" element={only(['dept'], <AddEmployeePage />)} />
+<Route path="/email-settings" element={only(['dept'], <EmailSettingsPage />)} />
+<Route path="/archives" element={only(['dept'], <ArchivesPage />)} />
+<Route path="/activity" element={<ActivityPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

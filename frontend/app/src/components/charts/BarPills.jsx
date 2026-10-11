@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const HATCH = 'repeating-linear-gradient(135deg, #b9c9c5 0 2px, transparent 2px 7px)';
+const HATCH = 'repeating-linear-gradient(135deg, #e1e1e0 0 2px, transparent 2px 7px)';
 
 export default function BarPills({ data, height = 230 }) {
   const [ready, setReady] = useState(false);
@@ -28,11 +28,11 @@ export default function BarPills({ data, height = 230 }) {
                 {d.value.toLocaleString('ar-EG')}
               </span>
               <div
-                className={`h-full w-full rounded-full transition duration-300 group-hover:scale-x-105 ${empty ? 'border border-slate-200' : color}`}
+                className={`h-full w-full rounded-full transition duration-300 group-hover:scale-x-105 ${empty ? 'border border-neutral-200' : color}`}
                 style={empty ? { backgroundImage: HATCH } : undefined}
               />
             </div>
-            <span className={`mt-2 text-sm font-bold ${d.today ? 'text-brand-700' : 'text-slate-400'}`} style={{ height: labelH - 8 }}>{d.label}</span>
+            <span className={`mt-2 text-sm font-bold ${d.today ? 'text-brand-700' : 'text-neutral-400'}`} style={{ height: labelH - 8 }}>{d.label}</span>
           </div>
         );
       })}

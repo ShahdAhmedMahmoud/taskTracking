@@ -26,10 +26,10 @@ export default function NotificationsPage() {
       {items.length ? (
         <div className="space-y-2">
           {items.map((n) => (
-            <article key={n.id} onClick={() => open(n)} className={`card-hover flex items-start gap-3 p-4 ${n.readAt ? '' : 'border-indigo-200 bg-indigo-50/50'}`}>
-              <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${n.readAt ? 'bg-slate-100' : 'bg-indigo-100'}`}>🔔</div>
-              <div className="min-w-0 flex-1"><strong>{n.title}</strong><p className="mt-0.5 text-sm text-slate-600">{n.message}</p></div>
-              <time className="shrink-0 text-xs text-slate-400">{new Date(n.createdAt).toLocaleString('ar-EG')}</time>
+            <article key={n.id} onClick={() => open(n)} className={`card-hover flex items-start gap-3 p-4 ${n.readAt ? '' : 'border-brand-200 bg-brand-50/50'}`}>
+              <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${n.readAt ? 'bg-neutral-100' : 'bg-brand-100 text-brand-700'}`}>🔔</div>
+              <div className="min-w-0 flex-1"><strong>{n.title}</strong><p className="mt-0.5 text-sm text-neutral-600">{n.message}</p></div>
+              <time className="shrink-0 text-xs text-neutral-400">{new Date(n.createdAt).toLocaleString('ar-EG')}</time>
             </article>
           ))}
         </div>

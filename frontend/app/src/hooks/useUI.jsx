@@ -5,9 +5,9 @@
 // export const useUI = () => useContext(UICtx);
 
 // const toastTone = {
-//   success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-//   error: 'border-rose-200 bg-rose-50 text-rose-700',
-//   info: 'border-indigo-200 bg-white text-slate-700',
+//   success: 'border-brand-200 bg-brand-50 text-brand-600',
+//   error: 'border-brand-200 bg-brand-50 text-brand-600',
+//   info: 'border-brand-200 bg-white text-neutral-700',
 // };
 
 // export function UIProvider({ children }) {
@@ -35,10 +35,10 @@
 //       </div>
 //       {dialog && (
 //         <Modal title={dialog.title} onClose={() => answer(false)}>
-//           <p className="whitespace-pre-line text-sm leading-7 text-slate-600">{dialog.message}</p>
+//           <p className="whitespace-pre-line text-sm leading-7 text-neutral-600">{dialog.message}</p>
 //           <div className="mt-5 flex justify-end gap-2">
 //             <button className="btn-ghost" onClick={() => answer(false)}>إلغاء</button>
-//             <button className={dialog.primary ? 'btn-primary' : 'btn bg-rose-600 text-white hover:bg-rose-700'} onClick={() => answer(true)}>
+//             <button className={dialog.primary ? 'btn-primary' : 'btn bg-brand-600 text-white hover:bg-brand-600'} onClick={() => answer(true)}>
 //               {dialog.confirmText || 'تأكيد'}
 //             </button>
 //           </div>
@@ -56,10 +56,10 @@ const UICtx = createContext(null);
 export const useUI = () => useContext(UICtx);
 
 const TONES = {
-  success: { Icon: CheckIcon, ring: 'border-emerald-200', accent: 'bg-emerald-500', icon: 'bg-emerald-50 text-emerald-600' },
-  error:   { Icon: AlertIcon, ring: 'border-rose-200',    accent: 'bg-rose-500',    icon: 'bg-rose-50 text-rose-600' },
-  warning: { Icon: AlertIcon, ring: 'border-amber-200',   accent: 'bg-amber-500',   icon: 'bg-amber-50 text-amber-600' },
-  info:    { Icon: InfoIcon,  ring: 'border-slate-200',   accent: 'bg-brand-500',   icon: 'bg-brand-50 text-brand-600' },
+  success: { Icon: CheckIcon, ring: 'border-brand-200',   accent: 'bg-brand-600',   icon: 'bg-brand-50 text-brand-700' },
+  error:   { Icon: AlertIcon, ring: 'border-brand-200',    accent: 'bg-brand-500',    icon: 'bg-brand-50 text-brand-600' },
+  warning: { Icon: AlertIcon, ring: 'border-brand-200',   accent: 'bg-brand-500',   icon: 'bg-brand-50 text-brand-600' },
+  info:    { Icon: InfoIcon,  ring: 'border-neutral-200',   accent: 'bg-brand-500',   icon: 'bg-brand-50 text-brand-600' },
 };
 const MAX_TOASTS = 4;
 
@@ -111,8 +111,8 @@ export function UIProvider({ children }) {
             <div key={t.id} role="status" className={`pointer-events-auto relative flex w-full max-w-md items-center gap-3 overflow-hidden rounded-2xl border bg-white py-3 pe-3 ps-5 shadow-lift animate-rise ${tone.ring}`}>
               <span className={`absolute inset-y-0 start-0 w-1.5 ${tone.accent}`} />
               <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl ${tone.icon}`}><Icon className="h-5 w-5" /></span>
-              <p className="min-w-0 flex-1 text-sm font-bold leading-6 text-slate-700">{t.message}</p>
-              <button type="button" onClick={() => dismiss(t.id)} aria-label="إغلاق" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-300 transition hover:bg-slate-100 hover:text-slate-600">
+              <p className="min-w-0 flex-1 text-sm font-bold leading-6 text-neutral-700">{t.message}</p>
+              <button type="button" onClick={() => dismiss(t.id)} aria-label="إغلاق" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-neutral-300 transition hover:bg-neutral-100 hover:text-neutral-600">
                 <CloseIcon className="h-4 w-4" />
               </button>
               <span className={`toast-bar absolute inset-x-0 bottom-0 h-0.5 origin-right opacity-60 ${tone.accent}`} style={{ animationDuration: `${t.ms}ms` }} />
@@ -136,10 +136,10 @@ export function UIProvider({ children }) {
           )}
         >
           <div className="flex items-start gap-4">
-            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${dialog.primary ? 'bg-brand-50 text-brand-600' : 'bg-rose-50 text-rose-600'}`}>
+            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${dialog.primary ? 'bg-brand-50 text-brand-600' : 'bg-brand-50 text-brand-600'}`}>
               {dialog.primary ? <InfoIcon className="h-6 w-6" /> : <AlertIcon className="h-6 w-6" />}
             </span>
-            <p className="whitespace-pre-line pt-1 text-base leading-7 text-slate-600">{dialog.message}</p>
+            <p className="whitespace-pre-line pt-1 text-base leading-7 text-neutral-600">{dialog.message}</p>
           </div>
         </Modal>
       )}

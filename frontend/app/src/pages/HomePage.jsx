@@ -47,7 +47,7 @@ function SectionHead({ title, subtitle, children }) {
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
         <h2 className="text-xl font-extrabold">{title}</h2>
-        {subtitle && <p className="mt-0.5 text-sm text-slate-400">{subtitle}</p>}
+        {subtitle && <p className="mt-0.5 text-sm text-neutral-400">{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -121,32 +121,32 @@ export default function HomePage() {
     <div className="space-y-6">
       {/* ===== Hero + الإجراءات السريعة ===== */}
       <div>
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 p-6 pb-16 text-white shadow-lift animate-rise sm:p-8 sm:pb-16">
-          <div className="pointer-events-none absolute -start-16 -top-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 end-10 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
-          <div className="pointer-events-none absolute inset-0 opacity-[.07]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+        <section className="relative overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50/70 to-brand-100/50 p-6 pb-16 text-neutral-800 shadow-soft animate-rise sm:p-8 sm:pb-16">
+          <div className="pointer-events-none absolute -start-16 -top-16 h-72 w-72 rounded-full bg-brand-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 end-10 h-72 w-72 rounded-full bg-brand-300/20 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 opacity-[.03]" style={{ backgroundImage: 'radial-gradient(#2A317A 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
 
           <div className="relative flex flex-wrap items-center justify-between gap-6">
             <div className="min-w-0">
-              <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-sm font-bold backdrop-blur">
-                <CalendarIcon className="h-4 w-4" />{today}
+              <p className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-sm font-bold text-brand-800 ring-1 ring-brand-200/70">
+                <CalendarIcon className="h-4 w-4 text-brand-600" />{today}
               </p>
-              <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl">{greeting()}، {deptManager || session?.name}</h2>
-              <p className="mt-2 max-w-xl text-base leading-relaxed text-white/80">
+              <h2 className="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">{greeting()}، {deptManager || session?.name}</h2>
+              <p className="mt-2 max-w-xl text-base leading-relaxed text-[#3C3C3B]">
                 عندك {n(counts.running)} مشروع جاري
                 {counts.pending > 0 && `، و${n(counts.pending)} معلق بانتظار القرار`}
                 {counts.total > 0 && `، ونسبة الفوز ${counts.decided ? `${n(counts.winPct)}%` : 'لسه ما اتحددتش'}`}.
               </p>
-              <p className="mt-3 inline-block rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-bold text-white/90 ring-1 ring-white/15">
+              <p className="mt-3 inline-block rounded-full bg-white px-3.5 py-1.5 text-sm font-bold text-brand-700 ring-1 ring-brand-200/80 shadow-xs">
                 {n(main.length)} فرق · {n(engineersCount)} مهندس
               </p>
             </div>
 
-            <div className="flex w-full items-center gap-5 rounded-2xl bg-white/10 p-5 ring-1 ring-white/20 backdrop-blur sm:w-auto">
-              <ProgressRing pct={pctOf(tasksDone, tasksTotal)} size={112} stroke={11} tone="light" />
+            <div className="flex w-full items-center gap-5 rounded-2xl bg-white/80 p-5 ring-1 ring-brand-200/60 shadow-sm backdrop-blur sm:w-auto">
+              <ProgressRing pct={pctOf(tasksDone, tasksTotal)} size={112} stroke={11} tone="brand" />
               <div>
-                <p className="text-sm font-bold text-white/70">إنجاز المهام</p>
-                <p className="mt-1 text-2xl font-extrabold tabular-nums">{n(tasksDone)} <span className="text-base font-semibold text-white/70">من {n(tasksTotal)}</span></p>
+                <p className="text-sm font-bold text-neutral-500">إنجاز المهام</p>
+                <p className="mt-1 text-2xl font-extrabold tabular-nums text-brand-900">{n(tasksDone)} <span className="text-base font-semibold text-neutral-400">من {n(tasksTotal)}</span></p>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
       <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 xl:grid-cols-4">
         <StatCard featured delay={0} to="/projects" icon={<ProjectsIcon />} label="إجمالي المشاريع" value={counts.total} hint={`${n(counts.delivered)} تم تسليمه`} />
         <StatCard delay={70} to="/projects" icon={<ClockIcon />} label="مشاريع جارية" value={counts.running} tone="sky" hint={counts.running ? `متوسط الإنجاز ${n(avgProgress)}%` : 'لا توجد مشاريع جارية'} />
-        <StatCard delay={140} icon={<CheckIcon />} label="تم تسليمها" value={counts.delivered} tone="emerald" hint={`${n(counts.won)} فوز · ${n(counts.lost)} خسارة · ${n(counts.pending)} معلق`} />
+        <StatCard delay={140} icon={<CheckIcon />} label="تم تسليمها" value={counts.delivered} tone="brand" hint={`${n(counts.won)} فوز · ${n(counts.lost)} خسارة · ${n(counts.pending)} معلق`} />
         <StatCard delay={210} icon={<TrophyIcon />} label="نسبة الفوز" value={counts.winPct} suffix="%" tone="amber" hint={counts.decided ? `من ${n(counts.decided)} نتيجة نهائية` : 'لا نتائج نهائية بعد'} />
       </div>
 
@@ -184,12 +184,12 @@ export default function HomePage() {
         </Panel>
 
         <Panel className="lg:col-span-5" delay={120} title="نتائج التسليم" subtitle={`${n(pr.delivered)} مشروع مسلّم · ${PERIOD_TEXT[period]}`}
-          action={<span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-600"><TrophyIcon className="h-5 w-5" /></span>}>
+          action={<span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><TrophyIcon className="h-5 w-5" /></span>}>
           <DonutChart
             centerValue={n(pr.delivered)} centerLabel="مشروع مسلّم"
             segments={['won', 'pending', 'lost'].map((k) => ({ label: STATES[k].label, color: STATES[k].color, value: pr[k] }))}
           />
-          <p className="mt-4 text-center text-sm font-semibold text-slate-400">
+          <p className="mt-4 text-center text-sm font-semibold text-neutral-400">
             نسبة الفوز في الفترة: <b className="text-brand-700">{pr.decided ? `${n(pr.winPct)}%` : '—'}</b>
           </p>
         </Panel>
@@ -198,7 +198,7 @@ export default function HomePage() {
       {/* ===== أداء الفرق ===== */}
       <SectionHead title="أداء الفرق" subtitle="كل فريق: إنجاز مهامه، وإيه اللي سلّمه ونتيجة كل مشروع (اضغطي على المشاريع المسلّمة)" />
       <div className="grid gap-5 pt-1 md:grid-cols-2 2xl:grid-cols-3">
-        {teamCards.length === 0 && <p className="card col-span-full py-10 text-center text-sm text-slate-400">لا توجد فرق بعد</p>}
+        {teamCards.length === 0 && <p className="card col-span-full py-10 text-center text-sm text-neutral-400">لا توجد فرق بعد</p>}
         {teamCards.map(({ t, pct, done, total, b }, i) => (
           <TeamPerformanceCard
             key={t.id} team={t} pct={pct} done={done} total={total} breakdown={b} delay={i * 70}
@@ -213,8 +213,8 @@ export default function HomePage() {
           action={<Link to="/projects" className="text-sm font-bold text-brand-600 transition hover:text-brand-800">عرض الكل</Link>}>
           <ul className="space-y-2.5">
             {runningList.length === 0 && (
-              <li className="flex flex-col items-center gap-2 py-10 text-center text-sm text-slate-400">
-                <CheckIcon className="h-9 w-9 text-emerald-400" />لا توجد مشاريع جارية
+              <li className="flex flex-col items-center gap-2 py-10 text-center text-sm text-neutral-400">
+                <CheckIcon className="h-9 w-9 text-brand-500" />لا توجد مشاريع جارية
               </li>
             )}
             {runningList.slice(0, 6).map(({ p, engineer }, i) => {
@@ -222,21 +222,21 @@ export default function HomePage() {
               const prog = projectProgress(p);
               return (
                 <li key={p.id ?? i}>
-                  <Link to={`/engineers/${engineer.id}`} className="block rounded-xl border border-slate-100 p-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-soft">
+                  <Link to={`/engineers/${engineer.id}`} className="block rounded-xl border border-neutral-100 p-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-soft">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
                         <p className="truncate text-base font-bold">{p.name || 'مشروع بدون اسم'}</p>
-                        <p className="mt-0.5 truncate text-sm text-slate-400">{engineer.name} · {fmtDate(p.deliveryDate)}</p>
+                        <p className="mt-0.5 truncate text-sm text-neutral-400">{engineer.name} · {fmtDate(p.deliveryDate)}</p>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
                         {k !== null && k >= 0 && (
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${k <= 3 ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-slate-50 text-slate-500 ring-slate-200'}`}>{soonText(k)}</span>
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${k <= 3 ? 'bg-brand-50 text-brand-600 ring-brand-200' : 'bg-neutral-50 text-neutral-500 ring-neutral-200'}`}>{soonText(k)}</span>
                         )}
                         <span className="text-base font-extrabold tabular-nums text-brand-700">{n(prog.pct)}%</span>
                       </div>
                     </div>
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-gradient-to-l from-sky-300 to-brand-600 transition-[width] duration-1000 ease-out" style={{ width: `${ready ? prog.pct : 0}%`, transitionDelay: `${i * 80}ms` }} />
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-neutral-100">
+                      <div className="h-full rounded-full bg-gradient-to-l from-brand-400 to-brand-600 transition-[width] duration-1000 ease-out" style={{ width: `${ready ? prog.pct : 0}%`, transitionDelay: `${i * 80}ms` }} />
                     </div>
                   </Link>
                 </li>
@@ -248,7 +248,7 @@ export default function HomePage() {
         <div className="space-y-4 lg:col-span-5">
           <Panel delay={140} title="ضغط العمل على المهندسين" subtitle="أكتر المهندسين مشاريع جارية">
             <ul className="space-y-4">
-              {workload.length === 0 && <li className="py-8 text-center text-sm text-slate-400">لا توجد مشاريع جارية</li>}
+              {workload.length === 0 && <li className="py-8 text-center text-sm text-neutral-400">لا توجد مشاريع جارية</li>}
               {workload.map(({ engineer, count, avg }, i) => (
                 <li key={engineer.id}>
                   <Link to={`/engineers/${engineer.id}`} className="group flex items-center gap-3">
@@ -256,10 +256,10 @@ export default function HomePage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <p className="truncate text-base font-bold transition group-hover:text-brand-700">{engineer.name}</p>
-                        <p className="shrink-0 text-sm font-bold text-slate-400">{n(count)} مشروع · <span className="text-brand-700">{n(avg)}%</span></p>
+                        <p className="shrink-0 text-sm font-bold text-neutral-400">{n(count)} مشروع · <span className="text-brand-700">{n(avg)}%</span></p>
                       </div>
-                      <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-100">
-                        <div className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-brand-600 transition-[width] duration-1000 ease-out" style={{ width: `${ready ? (count / maxLoad) * 100 : 0}%`, transitionDelay: `${i * 90}ms` }} />
+                      <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-neutral-100">
+                        <div className="h-full rounded-full bg-gradient-to-l from-brand-400 to-brand-600 transition-[width] duration-1000 ease-out" style={{ width: `${ready ? (count / maxLoad) * 100 : 0}%`, transitionDelay: `${i * 90}ms` }} />
                       </div>
                     </div>
                   </Link>
@@ -271,16 +271,16 @@ export default function HomePage() {
           {hasrTotal > 0 && (
             <Panel delay={200} title="قسم الحصر" subtitle={`${n(hasrTotal)} مشروع وارد`}
               action={<span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><HasrIcon className="h-5 w-5" /></span>}>
-              <div className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-slate-100">
-                {[[hasrSum.done, 'bg-brand-700'], [hasrSum.working, 'bg-amber-400'], [hasrSum.waiting, 'bg-slate-300']].map(([v, c], i) => (
+              <div className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-neutral-100">
+                {[[hasrSum.done, 'bg-brand-700'], [hasrSum.working, 'bg-brand-400'], [hasrSum.waiting, 'bg-neutral-300']].map(([v, c], i) => (
                   v > 0 && <div key={i} className={`${c} transition-[flex-grow] duration-1000 ease-out`} style={{ flexGrow: ready ? v : 0, flexBasis: 0 }} />
                 ))}
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                {[['تم', hasrSum.done, 'text-brand-700'], ['جاري', hasrSum.working, 'text-amber-600'], ['منتظر', hasrSum.waiting, 'text-slate-500']].map(([l, v, c]) => (
-                  <div key={l} className="rounded-xl bg-slate-50 py-3 transition hover:bg-brand-50">
+                {[['تم', hasrSum.done, 'text-brand-700'], ['جاري', hasrSum.working, 'text-brand-600'], ['منتظر', hasrSum.waiting, 'text-neutral-500']].map(([l, v, c]) => (
+                  <div key={l} className="rounded-xl bg-neutral-50 py-3 transition hover:bg-brand-50">
                     <p className={`text-2xl font-extrabold tabular-nums ${c}`}>{n(v)}</p>
-                    <p className="text-sm font-semibold text-slate-400">{l}</p>
+                    <p className="text-sm font-semibold text-neutral-400">{l}</p>
                   </div>
                 ))}
               </div>

@@ -11,10 +11,10 @@ import { STATES, n, stateOf, daysLeft, projectProgress, collectProjects } from '
 
 /* ================= ثوابت ================= */
 const TABS = [
-  ['all', 'كل المشاريع', ProjectsIcon, 'bg-brand-50 text-brand-700', '#10675d'],
-  ['running', 'جارية', ClockIcon, 'bg-sky-50 text-sky-600', STATES.running.color],
-  // ['late', 'متأخرة', CalendarIcon, 'bg-rose-50 text-rose-600', STATES.lost.color],
-  ['delivered', 'تم التسليم', CheckIcon, 'bg-emerald-50 text-emerald-600', '#10b981'],
+  ['all', 'كل المشاريع', ProjectsIcon, 'bg-brand-50 text-brand-700', '#2a317a'],
+  ['running', 'جارية', ClockIcon, 'bg-brand-50 text-brand-600', STATES.running.color],
+  // ['late', 'متأخرة', CalendarIcon, 'bg-brand-50 text-brand-600', STATES.lost.color],
+  ['delivered', 'تم التسليم', CheckIcon, 'bg-brand-50 text-brand-700', '#2a317a'],
 ];
 const OUTCOMES = [['all', 'كل المسلّم'], ['pending', 'معلق'], ['won', 'فوز'], ['lost', 'خسارة']];
 const SORTS = [
@@ -52,7 +52,7 @@ const SORTERS = {
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' }) : 'بدون تاريخ');
 const whenText = (k) => (k === null ? 'بدون تاريخ' : k < 0 ? `متأخر ${n(-k)} يوم` : k === 0 ? 'اليوم' : k === 1 ? 'غدًا' : `بعد ${n(k)} يوم`);
-const whenTone = (k) => (k === null ? 'bg-slate-50 text-slate-400 ring-slate-200' : k < 0 ? 'bg-rose-50 text-rose-600 ring-rose-200' : k <= 3 ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-slate-50 text-slate-500 ring-slate-200');
+const whenTone = (k) => (k === null ? 'bg-neutral-50 text-neutral-400 ring-neutral-200' : k < 0 ? 'bg-brand-50 text-brand-600 ring-brand-200' : k <= 3 ? 'bg-brand-50 text-brand-600 ring-brand-200' : 'bg-neutral-50 text-neutral-500 ring-neutral-200');
 const kOrInf = (k) => (k === null ? 1e9 : k);
 
 /* ================= عناصر صغيرة ================= */
@@ -79,11 +79,11 @@ function Count({ value }) {
   return <>{n(v)}</>;
 }
 
-function Bar({ pct, className = '', fill = 'bg-gradient-to-l from-sky-300 to-brand-600' }) {
+function Bar({ pct, className = '', fill = 'bg-gradient-to-l from-brand-300 to-brand-600' }) {
   const [on, setOn] = useState(false);
   useEffect(() => { const id = requestAnimationFrame(() => setOn(true)); return () => cancelAnimationFrame(id); }, []);
   return (
-    <div className={`h-2 overflow-hidden rounded-full bg-slate-100 ${className}`}>
+    <div className={`h-2 overflow-hidden rounded-full bg-neutral-100 ${className}`}>
       <div className={`h-full rounded-full transition-[width] duration-1000 ease-out motion-reduce:transition-none ${fill}`} style={{ width: `${on ? pct : 0}%` }} />
     </div>
   );
@@ -112,37 +112,37 @@ function ProjectRow({ item, i, lab }) {
         <div className="min-w-0">
           <h3 className="flex items-center gap-1.5 text-base font-extrabold">
             <Link to={`/engineers/${engineer.id}?p=${p.id}`} className="truncate after:absolute after:inset-0 focus:outline-none">{p.name || 'مشروع بدون اسم'}</Link>
-            {p.note && <span title={p.note} className="relative z-10 shrink-0 text-amber-500"><NoteIcon className="h-4 w-4" /></span>}
+            {p.note && <span title={p.note} className="relative z-10 shrink-0 text-brand-500"><NoteIcon className="h-4 w-4" /></span>}
           </h3>
-          <p className="flex items-center gap-1.5 truncate text-xs text-slate-400">
-            <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: team.color || '#6366f1' }} />{engineer.name} · {teamLabel(team)}
+          <p className="flex items-center gap-1.5 truncate text-xs text-neutral-400">
+            <span className="h-2 w-2 shrink-0 rounded-full bg-brand-600" />{engineer.name} · {teamLabel(team)}
           </p>
         </div>
       </div>
 
       {/* الإنجاز */}
       <div>
-        <div className="mb-1.5 flex items-center justify-between text-xs font-bold text-slate-400">
+        <div className="mb-1.5 flex items-center justify-between text-xs font-bold text-neutral-400">
           <span>{n(pr.done)} من {n(pr.total)} مهمة</span>
           <span className="tabular-nums text-brand-700">{n(pr.pct)}%</span>
         </div>
-        <Bar pct={pr.pct} fill={p.finished ? 'bg-emerald-500' : undefined} />
+        <Bar pct={pr.pct} fill={p.finished ? 'bg-brand-600' : undefined} />
       </div>
 
       {/* الجولات */}
       <div className="min-w-0">
         {rounds.length === 0 ? (
-          <p className="text-xs font-semibold text-slate-300">لا توجد جولات</p>
+          <p className="text-xs font-semibold text-neutral-300">لا توجد جولات</p>
         ) : (
           <>
             <div className="flex items-center gap-1.5">
               {rounds.slice(0, 8).map((r) => (
-                <span key={r.id} title={`${r.title}${r.delivered ? ' · تم التسليم' : ''}`} className={`h-2.5 w-2.5 rounded-full ring-2 transition-colors duration-500 ${r.delivered ? 'bg-emerald-500 ring-emerald-100' : 'bg-white ring-slate-300'}`} />
+                <span key={r.id} title={`${r.title}${r.delivered ? ' · تم التسليم' : ''}`} className={`h-2.5 w-2.5 rounded-full ring-2 transition-colors duration-500 ${r.delivered ? 'bg-brand-600 ring-brand-100' : 'bg-white ring-neutral-300'}`} />
               ))}
-              {rounds.length > 8 && <span className="text-xs font-bold text-slate-400">+{n(rounds.length - 8)}</span>}
-              <span className="ms-1 text-xs font-extrabold tabular-nums text-slate-500">{n(rd)}/{n(rounds.length)}</span>
+              {rounds.length > 8 && <span className="text-xs font-bold text-neutral-400">+{n(rounds.length - 8)}</span>}
+              <span className="ms-1 text-xs font-extrabold tabular-nums text-neutral-500">{n(rd)}/{n(rounds.length)}</span>
             </div>
-            <p className="mt-1.5 truncate text-xs font-semibold text-slate-400">
+            <p className="mt-1.5 truncate text-xs font-semibold text-neutral-400">
               {next ? <>التالية: {next.r.title}{next.r.date ? ` · ${fmtDate(next.r.date)}` : ''}</> : 'كل الجولات اتسلّمت'}
             </p>
           </>
@@ -153,9 +153,9 @@ function ProjectRow({ item, i, lab }) {
       <div className="flex flex-wrap items-center gap-2 md:justify-end">
         <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${STATES[st].pill}`}>{lab(st)}</span>
         {p.finished
-          ? <span className="text-xs font-semibold text-slate-400">سُلّم {fmtDate(p.deliveryDate)}</span>
+          ? <span className="text-xs font-semibold text-neutral-400">سُلّم {fmtDate(p.deliveryDate)}</span>
           : <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${whenTone(k)}`}>{whenText(k)}</span>}
-        <ArrowIcon className="hidden h-4 w-4 shrink-0 text-slate-300 transition duration-300 group-hover/row:-translate-x-1 group-hover/row:text-brand-600 md:block" />
+        <ArrowIcon className="hidden h-4 w-4 shrink-0 text-neutral-300 transition duration-300 group-hover/row:-translate-x-1 group-hover/row:text-brand-600 md:block" />
       </div>
     </article>
   );
@@ -243,17 +243,17 @@ export default function ProjectsPage() {
           return (
             <button
               key={k} type="button" role="tab" aria-selected={on} onClick={() => setParams({ status: k, outcome: 'all' })}
-              className={`rounded-2xl bg-white p-4 text-start ring-1 animate-rise transition duration-300 motion-reduce:transition-none ${on ? '-translate-y-0.5 shadow-lift ring-2 ring-brand-500' : 'ring-slate-200 hover:-translate-y-0.5 hover:shadow-soft hover:ring-brand-200'}`}
+              className={`rounded-2xl bg-white p-4 text-start ring-1 animate-rise transition duration-300 motion-reduce:transition-none ${on ? '-translate-y-0.5 shadow-lift ring-2 ring-brand-500' : 'ring-neutral-200 hover:-translate-y-0.5 hover:shadow-soft hover:ring-brand-200'}`}
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <span className="flex items-center gap-3">
                 <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition duration-300 ${on ? 'scale-105 bg-brand-600 text-white' : tone}`}><Icon className="h-5 w-5" /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-bold text-slate-400">{label}</span>
-                  <span className={`block text-3xl font-extrabold tabular-nums ${k === 'late' && counts.late > 0 ? 'text-rose-600' : ''}`}><Count value={counts[k]} /></span>
+                  <span className="block truncate text-sm font-bold text-neutral-400">{label}</span>
+                  <span className={`block text-3xl font-extrabold tabular-nums ${k === 'late' && counts.late > 0 ? 'text-brand-600' : ''}`}><Count value={counts[k]} /></span>
                 </span>
               </span>
-              <span className="mt-3 block h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <span className="mt-3 block h-1.5 overflow-hidden rounded-full bg-neutral-100">
                 <span className="block h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none" style={{ width: `${share}%`, background: color }} />
               </span>
             </button>
@@ -264,18 +264,18 @@ export default function ProjectsPage() {
       {/* ===== الفلتر الثانوي ===== */}
       <div className={`grid transition-[grid-template-rows,opacity] duration-500 ease-out motion-reduce:transition-none ${showOutcomes ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`} aria-hidden={!showOutcomes} inert={!showOutcomes}>
         <div className="overflow-hidden">
-          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl bg-emerald-50/60 p-2.5 ring-1 ring-emerald-100">
-            <span className="me-1 ps-1 text-sm font-bold text-emerald-800">النتيجة</span>
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl bg-brand-50/70 p-2.5 ring-1 ring-brand-100">
+            <span className="me-1 ps-1 text-sm font-bold text-brand-800">النتيجة</span>
             {OUTCOMES.map(([k, l]) => {
               const on = outcome === k;
               return (
                 <button
                   key={k} type="button" aria-pressed={on} onClick={() => setParams({ outcome: k })}
-                  className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 transition duration-300 motion-reduce:transition-none ${on ? 'bg-brand-600 text-white shadow-soft ring-brand-600' : 'bg-white text-slate-500 ring-slate-200 hover:bg-brand-50 hover:text-brand-800'}`}
+                  className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 transition duration-300 motion-reduce:transition-none ${on ? 'bg-brand-600 text-white shadow-soft ring-brand-600' : 'bg-white text-neutral-500 ring-neutral-200 hover:bg-brand-50 hover:text-brand-800'}`}
                 >
                   {k !== 'all' && <span className="h-2.5 w-2.5 rounded-full" style={{ background: STATES[k].color }} />}
                   {k === 'all' ? l : lab(k)}
-                  <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? 'bg-white/20' : 'bg-slate-100 text-slate-400'}`}>{n(k === 'all' ? counts.delivered : counts[k])}</span>
+                  <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? 'bg-white/20' : 'bg-neutral-100 text-neutral-400'}`}>{n(k === 'all' ? counts.delivered : counts[k])}</span>
                 </button>
               );
             })}
@@ -287,19 +287,19 @@ export default function ProjectsPage() {
       <div className="card mt-4 flex flex-wrap items-center gap-3 p-3.5">
         <label className="relative min-w-0 flex-1 basis-56">
           <span className="sr-only">بحث في المشاريع</span>
-          <SearchIcon className="pointer-events-none absolute start-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-300" />
+          <SearchIcon className="pointer-events-none absolute start-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-300" />
           <input
             type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي باسم المشروع أو المهندس أو الملحوظة"
-            className="w-full rounded-xl bg-slate-50 py-2.5 pe-4 ps-11 text-sm font-semibold outline-none ring-1 ring-slate-200 transition placeholder:text-slate-300 focus:bg-white focus:ring-2 focus:ring-brand-400"
+            className="w-full rounded-xl bg-neutral-50 py-2.5 pe-4 ps-11 text-sm font-semibold outline-none ring-1 ring-neutral-200 transition placeholder:text-neutral-300 focus:bg-white focus:ring-2 focus:ring-brand-400"
           />
         </label>
         {[
           ['الفريق', teamId, setTeamId, [['all', 'كل الفرق'], ...main.filter((t) => t.engineers.length).map((t) => [t.id, teamLabel(t)])]],
           ['ترتيب', sort, setSort, SORTS],
         ].map(([label, value, set, opts]) => (
-          <label key={label} className="flex items-center gap-2 text-sm font-bold text-slate-400">
+          <label key={label} className="flex items-center gap-2 text-sm font-bold text-neutral-400">
             {label}
-            <select value={value} onChange={(e) => set(e.target.value)} className="rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-slate-600 outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400">
+            <select value={value} onChange={(e) => set(e.target.value)} className="rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-neutral-600 outline-none ring-1 ring-neutral-200 focus:ring-2 focus:ring-brand-400">
               {opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           </label>
@@ -310,21 +310,21 @@ export default function ProjectsPage() {
       {/* ===== القايمة + الجانب ===== */}
       <div className="mt-5 grid gap-5 lg:grid-cols-12">
         <div className="min-w-0 lg:col-span-8">
-          <p className="mb-3 text-sm font-semibold text-slate-400" aria-live="polite">
-            عرض <b className="text-slate-700"><Count value={list.length} /></b> من {n(base.length)} مشروع
+          <p className="mb-3 text-sm font-semibold text-neutral-400" aria-live="polite">
+            عرض <b className="text-neutral-700"><Count value={list.length} /></b> من {n(base.length)} مشروع
           </p>
 
           {list.length > 0 && (
-            <div className={`mb-2 hidden gap-5 px-4 ps-6 text-xs font-bold text-slate-400 md:grid ${GRID}`}>
+            <div className={`mb-2 hidden gap-5 px-4 ps-6 text-xs font-bold text-neutral-400 md:grid ${GRID}`}>
               <span>المشروع</span><span>الإنجاز</span><span>جولات التسليم</span><span className="text-end">الحالة والموعد</span>
             </div>
           )}
 
           {list.length === 0 ? (
             <div className="card flex flex-col items-center gap-3 py-14 text-center animate-rise">
-              <span className="grid h-14 w-14 place-items-center rounded-2xl bg-slate-50 text-slate-300"><SearchIcon className="h-7 w-7" /></span>
+              <span className="grid h-14 w-14 place-items-center rounded-2xl bg-neutral-50 text-neutral-300"><SearchIcon className="h-7 w-7" /></span>
               <p className="font-bold">{emptyText}</p>
-              <p className="text-sm text-slate-400">جرّبي تغيّري الفلتر أو كلمة البحث</p>
+              <p className="text-sm text-neutral-400">جرّبي تغيّري الفلتر أو كلمة البحث</p>
               {dirty && <button type="button" onClick={reset} className="rounded-full bg-brand-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-brand-700">مسح الفلاتر</button>}
             </div>
           ) : (
@@ -337,19 +337,19 @@ export default function ProjectsPage() {
         <aside className="space-y-5 lg:col-span-4 lg:sticky lg:top-4 lg:self-start">
           <Panel delay={100} title="أقرب جولات التسليم" subtitle={roundsInfo.total ? `${n(roundsInfo.done)} من ${n(roundsInfo.total)} جولة اتسلّمت` : 'الجولات اللي لسه ما اتسلّمتش'}
             action={<span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><LayersIcon className="h-5 w-5" /></span>}>
-            {roundsInfo.total > 0 && <Bar pct={(roundsInfo.done / roundsInfo.total) * 100} className="mb-4" fill="bg-gradient-to-l from-emerald-400 to-brand-600" />}
+            {roundsInfo.total > 0 && <Bar pct={(roundsInfo.done / roundsInfo.total) * 100} className="mb-4" fill="bg-gradient-to-l from-brand-400 to-brand-600" />}
             {roundsInfo.upcoming.length === 0 ? (
-              <p className="py-6 text-center text-sm leading-relaxed text-slate-400">
+              <p className="py-6 text-center text-sm leading-relaxed text-neutral-400">
                 {roundsInfo.total ? 'كل الجولات اتسلّمت 🎉' : 'لما تضيفي جولات تسليم من صفحة المهندس هتظهر هنا مرتبة بأقرب موعد.'}
               </p>
             ) : (
               <ul className="space-y-2.5">
                 {roundsInfo.upcoming.map(({ item, r, k }) => (
                   <li key={`${item.p.id}-${r.id}`}>
-                    <Link to={`/engineers/${item.engineer.id}?p=${item.p.id}`} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3 transition duration-300 hover:border-brand-200 hover:bg-brand-50/40">
+                    <Link to={`/engineers/${item.engineer.id}?p=${item.p.id}`} className="flex items-center gap-3 rounded-xl border border-neutral-100 p-3 transition duration-300 hover:border-brand-200 hover:bg-brand-50/40">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-bold">{r.title || 'جولة'}</p>
-                        <p className="truncate text-xs text-slate-400">{item.p.name || 'مشروع بدون اسم'} · {item.engineer.name}</p>
+                        <p className="truncate text-xs text-neutral-400">{item.p.name || 'مشروع بدون اسم'} · {item.engineer.name}</p>
                       </div>
                       <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${whenTone(k)}`}>{r.date ? whenText(k) : 'بدون تاريخ'}</span>
                     </Link>
@@ -358,19 +358,19 @@ export default function ProjectsPage() {
               </ul>
             )}
             {roundsInfo.pendingCount > roundsInfo.upcoming.length && (
-              <p className="mt-3 text-center text-xs font-semibold text-slate-400">و{n(roundsInfo.pendingCount - roundsInfo.upcoming.length)} جولة تانية</p>
+              <p className="mt-3 text-center text-xs font-semibold text-neutral-400">و{n(roundsInfo.pendingCount - roundsInfo.upcoming.length)} جولة تانية</p>
             )}
           </Panel>
 
           <Panel delay={160} title="توزيع المشاريع" subtitle="حسب الحالة الحالية">
-            <div className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-neutral-100">
               {dist.map(({ k, v }) => v > 0 && <div key={k} className="transition-[flex-grow] duration-700 motion-reduce:transition-none" style={{ flexGrow: v, flexBasis: 0, background: STATES[k].color }} />)}
             </div>
             <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
               {dist.map(({ k, v }) => (
-                <li key={k} className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+                <li key={k} className="flex items-center gap-2 text-sm font-semibold text-neutral-500">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: STATES[k].color }} />{lab(k)}
-                  <b className="ms-auto tabular-nums text-slate-700">{n(v)}</b>
+                  <b className="ms-auto tabular-nums text-neutral-700">{n(v)}</b>
                 </li>
               ))}
             </ul>

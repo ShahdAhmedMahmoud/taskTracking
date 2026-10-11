@@ -19,7 +19,7 @@ export default function FormModal({ title, context, fields, submitText = 'حفظ
   return (
     <Modal title={title} onClose={onClose}>
       <form onSubmit={submit} className="space-y-3">
-        {context && <div className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700">{context}</div>}
+        {context && <div className="rounded-xl bg-brand-50 px-3 py-2 text-xs font-bold text-brand-700">{context}</div>}
         {fields.map((f) => (
           <div key={f.name}>
             <label className="label">{f.label}{f.required && ' *'}</label>
@@ -29,7 +29,7 @@ export default function FormModal({ title, context, fields, submitText = 'حفظ
                 {f.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             ) : f.type === 'file' ? (
-              <label className="flex cursor-pointer flex-col items-center gap-1 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500 hover:border-indigo-400">
+              <label className="flex cursor-pointer flex-col items-center gap-1 rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-4 text-center text-sm text-neutral-500 hover:border-brand-400">
                 <b>{values[f.name]?.name || 'اختاري الملف'}</b>
                 <span className="text-xs">{f.hint}</span>
                 <input type="file" hidden accept={f.accept} onChange={(e) => set(f.name, e.target.files[0])} />
@@ -41,7 +41,7 @@ export default function FormModal({ title, context, fields, submitText = 'حفظ
             )}
           </div>
         ))}
-        {error && <p className="text-sm font-bold text-rose-600">⚠ {error}</p>}
+        {error && <p className="text-sm font-bold text-brand-600">⚠ {error}</p>}
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" className="btn-ghost" onClick={onClose}>إلغاء</button>
           <button className="btn-primary" disabled={busy}>{busy ? '...' : submitText}</button>

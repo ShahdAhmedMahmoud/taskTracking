@@ -39,7 +39,7 @@ export default function TeamPage() {
         actions={<button className="btn-primary" onClick={() => setAdding(true)}>+ إضافة مهندس</button>} />
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard icon="📋" label="إجمالي المهام" value={s.total} />
-        <StatCard icon="✅" label="منجزة" value={s.done} tone="emerald" />
+        <StatCard icon="✅" label="منجزة" value={s.done} tone="brand" />
         <StatCard icon="⏳" label="متبقية" value={s.remaining} tone="rose" />
         <StatCard icon="📈" label="نسبة إنجاز الفريق" value={`${s.pct}%`} tone="amber" />
       </div>

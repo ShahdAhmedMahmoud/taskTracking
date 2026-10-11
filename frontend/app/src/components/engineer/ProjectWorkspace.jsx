@@ -12,7 +12,7 @@ import { toneChip } from '../../utils/dates';
 import { hasrStatusForProject } from '../../utils/helpers';
 import { projectStats } from '../../utils/stats';
 import { STATES, n, stateOf, daysLeft } from '../../utils/dashboardData';
-
+import TaskListCard from './TaskListCard';
 const FLOW = [
   ['running', 'جاري', 'قيد العمل حاليًا'],
   ['pending', 'تم التسليم', 'بانتظار نتيجة العميل'],
@@ -22,7 +22,7 @@ const FLOW = [
 
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : 'لم يُحدد');
 const whenText = (k) => (k === null ? '' : k < 0 ? `متأخر ${n(-k)} يوم` : k === 0 ? 'اليوم' : k === 1 ? 'غدًا' : `بعد ${n(k)} يوم`);
-const whenTone = (k) => (k === null ? '' : k < 0 ? 'bg-rose-50 text-rose-600 ring-rose-200' : k <= 3 ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-slate-50 text-slate-500 ring-slate-200');
+const whenTone = (k) => (k === null ? '' : k < 0 ? 'bg-brand-50 text-brand-600 ring-brand-200' : k <= 3 ? 'bg-brand-50 text-brand-600 ring-brand-200' : 'bg-neutral-50 text-neutral-500 ring-neutral-200');
 
 const FILTERS = [
   ['all', 'الكل', () => true],
@@ -102,7 +102,7 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
             </div>
           </div>
 
-          <div className="mt-5 border-t border-slate-100 pt-4">
+          <div className="mt-5 border-t border-neutral-100 pt-4">
             <span className="label">وضع المشروع</span>
             <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label="وضع المشروع">
               {FLOW.map(([k, l, hint]) => {
@@ -110,7 +110,7 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
                 return (
                   <button
                     key={k} type="button" role="radio" aria-checked={on} onClick={() => setState(k)}
-                    className={`rounded-xl p-3 text-start ring-1 transition duration-300 motion-reduce:transition-none ${on ? `${STATES[k].pill} ring-2 -translate-y-0.5 shadow-soft` : 'bg-white text-slate-500 ring-slate-200 hover:-translate-y-0.5 hover:bg-slate-50'}`}
+                    className={`rounded-xl p-3 text-start ring-1 transition duration-300 motion-reduce:transition-none ${on ? `${STATES[k].pill} ring-2 -translate-y-0.5 shadow-soft` : 'bg-white text-neutral-500 ring-neutral-200 hover:-translate-y-0.5 hover:bg-neutral-50'}`}
                   >
                     <span className="flex items-center gap-2 text-sm font-extrabold">
                       <span className="h-2.5 w-2.5 rounded-full transition-transform duration-300" style={{ background: STATES[k].color, transform: on ? 'scale(1.3)' : 'scale(1)' }} />
@@ -135,19 +135,19 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
             <ProgressRing pct={s.pct} size={104} stroke={10} />
             <div className="text-sm">
               <b className="block text-2xl tabular-nums">{n(s.done)}/{n(s.total)}</b>
-              <span className="text-slate-500">مهمة منجزة</span>
-              <span className="mt-0.5 block text-xs text-slate-400">متبقي {n(s.remaining)}</span>
+              <span className="text-neutral-500">مهمة منجزة</span>
+              <span className="mt-0.5 block text-xs text-neutral-400">متبقي {n(s.remaining)}</span>
             </div>
           </div>
 
           <div className="card space-y-3 p-5 animate-rise" style={{ animationDelay: '160ms' }}>
             {[
-              ['التسليم', project.deliveryDate, kDelivery, project.finished ? ['تم التسليم', 'bg-emerald-50 text-emerald-700 ring-emerald-200'] : null],
-              ['الاستفسارات', project.inquiryDate, kInquiry, kInquiry !== null && kInquiry < 0 ? ['انتهت', 'bg-slate-50 text-slate-400 ring-slate-200'] : null],
+              ['التسليم', project.deliveryDate, kDelivery, project.finished ? ['تم التسليم', 'bg-brand-50 text-brand-700 ring-brand-200'] : null],
+              ['الاستفسارات', project.inquiryDate, kInquiry, kInquiry !== null && kInquiry < 0 ? ['انتهت', 'bg-neutral-50 text-neutral-400 ring-neutral-200'] : null],
             ].map(([label, date, k, override]) => (
               <div key={label} className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-400">{label}</p>
+                  <p className="text-xs font-bold text-neutral-400">{label}</p>
                   <p className="truncate text-sm font-extrabold">{fmtDate(date)}</p>
                 </div>
                 {(override || k !== null) && (
@@ -167,7 +167,7 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
             placeholder="مثال: العميل طلب تمديد، أو في اشتراط خاص في الكراسة…" aria-label="ملحوظات المشروع"
             onBlur={(e) => e.target.value !== (project.note || '') && edit((p) => { p.note = e.target.value; })}
           />
-          <p className="mt-2 text-xs text-slate-400">بتتحفظ تلقائيًا أول ما تخرجي من الخانة، وبعدها اضغطي «حفظ الآن».</p>
+          <p className="mt-2 text-xs text-neutral-400">بتتحفظ تلقائيًا أول ما تخرجي من الخانة، وبعدها اضغطي «حفظ الآن».</p>
         </Panel>
         <RoundsPanel className="lg:col-span-7" delay={120} project={project} edit={edit} />
       </div>
@@ -176,19 +176,19 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
       <div className="animate-rise" style={{ animationDelay: '60ms' }}><FilesPanel project={project} user={user} /></div>
 
       {/* ===== المهام ===== */}
-      <section className="card p-4 animate-rise sm:p-5">
+      {/* <section className="card p-4 animate-rise sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-extrabold">قائمة المهام</h2>
-            <p className="text-sm text-slate-400">{n(s.done)} منجزة من {n(s.total)} · إجمالي البنود {n(items.length)}</p>
+            <p className="text-sm text-neutral-400">{n(s.done)} منجزة من {n(s.total)} · إجمالي البنود {n(items.length)}</p>
           </div>
           <button type="button" className="btn-primary inline-flex items-center gap-1.5" onClick={() => setModal('task')}>
             <PlusIcon className="h-4 w-4" />إضافة مهمة
           </button>
         </div>
 
-        <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full rounded-full bg-gradient-to-l from-sky-300 to-brand-600 transition-[width] duration-1000 ease-out motion-reduce:transition-none" style={{ width: `${ready ? s.pct : 0}%` }} />
+        <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-neutral-100">
+          <div className="h-full rounded-full bg-gradient-to-l from-brand-300 to-brand-600 transition-[width] duration-1000 ease-out motion-reduce:transition-none" style={{ width: `${ready ? s.pct : 0}%` }} />
         </div>
 
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1" role="group" aria-label="فلتر المهام">
@@ -197,18 +197,19 @@ export default function ProjectWorkspace({ project, edit, user, onArchive }) {
             return (
               <button
                 key={k} type="button" aria-pressed={on} onClick={() => setFilter(k)}
-                className={`flex shrink-0 items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 transition duration-300 ${on ? 'bg-brand-600 text-white shadow-soft ring-brand-600' : 'bg-white text-slate-500 ring-slate-200 hover:bg-brand-50 hover:text-brand-800'}`}
+                className={`flex shrink-0 items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 transition duration-300 ${on ? 'bg-brand-600 text-white shadow-soft ring-brand-600' : 'bg-white text-neutral-500 ring-neutral-200 hover:bg-brand-50 hover:text-brand-800'}`}
               >
                 {l}
-                <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? 'bg-white/20' : 'bg-slate-100 text-slate-400'}`}>{n(items.filter(fn).length)}</span>
+                <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? 'bg-white/20' : 'bg-neutral-100 text-neutral-400'}`}>{n(items.filter(fn).length)}</span>
               </button>
             );
           })}
         </div>
-      </section>
+      </section> */}
+      <TaskListCard project={project} edit={edit} />
 
       <div className="space-y-3">
-        {shown.length === 0 && <p className="card py-10 text-center text-sm text-slate-400">مفيش مهام في الفلتر ده</p>}
+        {shown.length === 0 && <p className="card py-10 text-center text-sm text-neutral-400">مفيش مهام في الفلتر ده</p>}
         {shown.map((x) => (x.custom ? (
           <TaskItem key={x.key} custom number={x.number} title={x.title} desc={x.desc} state={x.state}
             label={(id, fb) => fieldLabel('customTask', id, fb)}

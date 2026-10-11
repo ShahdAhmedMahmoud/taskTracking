@@ -65,7 +65,7 @@ export function hasrStatusForProject(projectId, hasrTeam, hasr) {
   const notes = item.hasrNotes || '';
   if (item.hasWork == null) return { tone: 'slate', icon: '⏳', text: 'لم يُحدد بعد — في انتظار قسم الحصر', notes };
   if (item.hasWork === false) return { tone: 'rose', icon: '✗', text: 'لا يوجد عمل حصر لهذا المشروع', notes };
-  if (item.hasrDone) return { tone: 'emerald', icon: '✅', text: 'تم الحصر والانتهاء من الأعمال', notes };
+  if (item.hasrDone) return { tone: 'brand', icon: '✅', text: 'تم الحصر والانتهاء من الأعمال', notes };
   let text = 'جاري العمل على الحصر';
   if (item.hasrDueDate) text += ` — ميعاد تسليم الحصر: ${new Date(item.hasrDueDate).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}`;
   return { tone: 'amber', icon: '🔧', text, notes };
