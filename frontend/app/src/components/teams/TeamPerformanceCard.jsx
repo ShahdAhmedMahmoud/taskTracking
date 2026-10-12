@@ -22,8 +22,6 @@ export default function TeamPerformanceCard({ team, rank, pct, done, total, brea
   }, []);
 
   const { running, delivered, won, lost, pending, decided, winPct } = breakdown;
-console.log('breakdown:', breakdown);
-console.log('delivered:', delivered, '| isArray:', Array.isArray(delivered), '| type:', typeof delivered);
   const count = delivered.length;
 
   return (
@@ -42,7 +40,7 @@ console.log('delivered:', delivered, '| isArray:', Array.isArray(delivered), '| 
         <div className="min-w-0 flex-1">
           <h3 className="truncate text-lg font-extrabold">{teamLabel(team)}</h3>
           <p className="truncate text-sm text-neutral-400">{team.manager} · {n(team.engineers.length)} مهندس</p>
-          <p className="mt-1.5 text-xs font-semibold text-neutral-400">إنجاز المهام: {n(done)} من {n(total)}</p>
+          <p className="mt-1.5 text-xs font-semibold text-neutral-500">إنجاز المهام: {n(done)} من {n(total)} · {n(pct)}%</p>
         </div>
         <Link to={`/teams/${team.id}`} aria-label="تفاصيل الفريق" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-neutral-400 ring-1 ring-neutral-200 transition duration-300 hover:bg-brand-600 hover:text-white hover:ring-brand-600 group-hover/team:-translate-x-1">
           <ArrowIcon className="h-4 w-4" />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useData } from '../hooks/useData';
 import StatCard from '../components/ui/StatCard';
+import Pagination from '../components/ui/Pagination';
 import ProgressRing from '../components/ui/ProgressRing';
 import Panel from '../components/ui/Panel';
 import Avatar from '../components/ui/Avatar';
@@ -16,7 +17,6 @@ import {
   TeamsIcon, EngineersIcon, ProjectsIcon, ReportsIcon, UserPlusIcon, SettingsIcon, MailIcon, ArchiveIcon,
   HasrIcon, FlagIcon, CheckIcon, ClockIcon, CalendarIcon, TrophyIcon,
 } from '../components/ui/Icons';
-import { mainTeams } from '../utils/helpers';
 import { teamStats, pctOf } from '../utils/stats';
 import {
   n, collectProjects, daysLeft, projectProgress, STATES, stateCounts, periodResults,
@@ -58,6 +58,7 @@ export default function HomePage() {
   const { session } = useAuth();
   const { teams, engineers, tasks, hasr, deptManager } = useData();
   const [period, setPeriod] = useState('month');
+  const [projectPage, setProjectPage] = useState(1);
 
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function HomePage() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const main = useMemo(() => mainTeams(teams), [teams]);
+  const main = useMemo(() => teams.filter((team) => team.type !== 'hasr'), [teams]);
   const all = useMemo(() => collectProjects(main, engineers), [main, engineers]);
 
   /* ---------- كل الوقت ---------- */
@@ -80,6 +81,10 @@ export default function HomePage() {
       }),
     [all],
   );
+  const projectPageSize = 5;
+  const projectPageCount = Math.max(1, Math.ceil(runningList.length / projectPageSize));
+  const safeProjectPage = Math.min(projectPage, projectPageCount);
+  const runningPage = runningList.slice((safeProjectPage - 1) * projectPageSize, safeProjectPage * projectPageSize);
   const avgProgress = runningList.length
     ? Math.round(runningList.reduce((a, { p }) => a + projectProgress(p).pct, 0) / runningList.length) : 0;
 
@@ -217,7 +222,7 @@ export default function HomePage() {
                 <CheckIcon className="h-9 w-9 text-brand-500" />لا توجد مشاريع جارية
               </li>
             )}
-            {runningList.slice(0, 6).map(({ p, engineer }, i) => {
+            {runningPage.map(({ p, engineer }, i) => {
               const k = daysLeft(p.deliveryDate);
               const prog = projectProgress(p);
               return (
@@ -243,12 +248,13 @@ export default function HomePage() {
               );
             })}
           </ul>
+          <Pagination page={safeProjectPage} pageCount={projectPageCount} pageSize={projectPageSize} itemCount={runningList.length} onChange={setProjectPage} />
         </Panel>
 
         <div className="space-y-4 lg:col-span-5">
-          <Panel delay={140} title="ضغط العمل على المهندسين" subtitle="أكتر المهندسين مشاريع جارية">
+          <Panel delay={140} title="ضغط العمل على المهندسين" subtitle="المهندسون الذين لديهم أكثر من مشروعين جاريين">
             <ul className="space-y-4">
-              {workload.length === 0 && <li className="py-8 text-center text-sm text-neutral-400">لا توجد مشاريع جارية</li>}
+              {workload.length === 0 && <li className="py-8 text-center text-sm text-neutral-400">لا يوجد مهندسون لديهم أكثر من مشروعين جاريين حاليًا</li>}
               {workload.map(({ engineer, count, avg }, i) => (
                 <li key={engineer.id}>
                   <Link to={`/engineers/${engineer.id}`} className="group flex items-center gap-3">

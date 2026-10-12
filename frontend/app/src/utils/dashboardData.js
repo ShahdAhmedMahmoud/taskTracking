@@ -1,3 +1,5 @@
+
+import { taskId, isTemplateTask } from './taskTemplates';
 const DAY = 86400000;
 
 export const n = (v) => Number(v || 0).toLocaleString("ar-EG");
@@ -30,14 +32,21 @@ export function collectProjects(teams, engineers) {
 }
 
 /** تقدم مشروع = المهام المنجزة ÷ المهام القابلة للتطبيق */
-export function projectProgress(p) {
-  const list = Object.values(p.tasks || {}).filter((t) => t && t.applicable);
-  const done = list.filter((t) => t.status).length;
-  return {
-    done,
-    total: list.length,
-    pct: list.length ? Math.round((done / list.length) * 100) : 0,
-  };
+// export function projectProgress(p) {
+//   const list = Object.values(p.tasks || {}).filter((t) => t && t.applicable);
+//   const done = list.filter((t) => t.status).length;
+//   return {
+//     done,
+//     total: list.length,
+//     pct: list.length ? Math.round((done / list.length) * 100) : 0,
+//   };
+// }
+export function projectProgress(p, tasks) {
+  const std = (tasks ? tasks.map((t) => p.tasks?.[taskId(t)]) : Object.values(p.tasks || {})).filter((s) => s && s.applicable);
+  const custom = (Array.isArray(p.customTasks) ? p.customTasks : []).filter(isTemplateTask);
+  const total = std.length + custom.length;
+  const done = std.filter((s) => s.status).length + custom.filter((c) => c.status).length;
+  return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
 /* ================= تصنيف المشاريع ================= */
@@ -205,6 +214,7 @@ export function workloadByEngineer(all, limit = 5) {
   return [...map.values()]
     .map((x) => ({ ...x, avg: Math.round(x.pctSum / x.count) }))
     .sort((a, b) => b.count - a.count)
+    .filter((x) => x.count > 2)
     .slice(0, limit);
 }
 

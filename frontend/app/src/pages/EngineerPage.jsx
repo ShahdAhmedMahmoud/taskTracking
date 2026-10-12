@@ -1,3 +1,5 @@
+
+
 import { useEffect, useState } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -9,10 +11,11 @@ import FormModal from '../components/ui/FormModal';
 import Loader, { Empty } from '../components/ui/Loader';
 import ProjectWorkspace from '../components/engineer/ProjectWorkspace';
 import ProjectFilter, { matchFilter } from '../components/engineer/ProjectFilter';
-import { PlusIcon, SaveIcon } from '../components/engineer/EngineerIcons';
+import ProjectTabs from '../components/engineer/ProjectTabs';
+import { SaveIcon } from '../components/engineer/EngineerIcons';
 import { timeAgo } from '../utils/dates';
 import { makeNewProject, teamLabel } from '../utils/helpers';
-import { STATES, n, stateOf, daysLeft, projectProgress } from '../utils/dashboardData';
+import { STATES, n, stateOf } from '../utils/dashboardData';
 
 const KEY = (id) => `tender-dashboard-active-project:${id}`;
 
@@ -20,7 +23,7 @@ export default function EngineerPage() {
   const { engId: paramId } = useParams();
   const { session } = useAuth();
   const { teams, tasks, engineers, config, dirty, mutate, saveEngineer, loadEngineer, archiveProject, outcomeLabel } = useData();
-  const { confirm } = useUI();
+  const { confirm, toast } = useUI();
   const [sp, setSp] = useSearchParams();
   const [modal, setModal] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -52,12 +55,31 @@ export default function EngineerPage() {
     try { await saveEngineer(engId); } finally { setSaving(false); }
   };
 
+  // const addProject = (v) => {
+  //   const np = { ...makeNewProject(tasks, config, v), note: (v.note || '').trim(), rounds: [] };
+  //   mutate(engId, (d) => { d.projects.push(np); });
+  //   setFStatus('all'); setFOutcome('all'); setFIds(null);
+  //   select(np.id);
+  // };
+
   const addProject = (v) => {
-    const np = { ...makeNewProject(tasks, config, v), note: (v.note || '').trim(), rounds: [] };
-    mutate(engId, (d) => { d.projects.push(np); });
-    setFStatus('all'); setFOutcome('all'); setFIds(null);
-    select(np.id);
+  if (v.startDate && v.deliveryDate && v.startDate > v.deliveryDate) {
+    toast('error', 'تاريخ البداية لازم يكون قبل تاريخ التسليم');
+    setTimeout(() => setModal('project'), 0);
+    return;
+  }
+  const now = new Date().toISOString();
+  const np = {
+    ...makeNewProject(tasks, config, v),
+    startDate: v.startDate || '',
+    note: (v.note || '').trim(), rounds: [{ id: 'round-1', title: 'الجولة 1', date: v.deliveryDate || '', delivered: false, deliveredAt: '', note: '' }],
+    createdBy: session.name, createdByRole: session.role, createdAt: now,
+    ...(v.note?.trim() ? { noteBy: session.name, noteByRole: session.role, noteAt: now } : {}),
   };
+  mutate(engId, (d) => { d.projects.push(np); });
+  setFStatus('all'); setFOutcome('all'); setFIds(null);
+  select(np.id);
+};
 
   const archive = async () => {
     const ok = await confirm({
@@ -154,35 +176,7 @@ export default function EngineerPage() {
       {projects.length > 1 && <ProjectFilter projects={projects} status={fStatus} outcome={fOutcome} onChange={changeFilter} lab={lab} />}
 
       {/* key بيتغير مع الفلتر عشان التبويبات تدخل بحركة جديدة */}
-      <div key={`${fStatus}-${fOutcome}`} className="-mx-1 mb-5 flex snap-x gap-3 overflow-x-auto px-1 pb-3 pt-1" role="tablist" aria-label="مشاريع المهندس">
-        {tabs.map((p, ti) => {
-          const st = stateOf(p);
-          const pr = projectProgress(p);
-          const k = daysLeft(p.deliveryDate);
-          const on = p.id === project.id;
-          return (
-            <button
-              key={p.id} type="button" role="tab" aria-selected={on} onClick={() => select(p.id)}
-              style={{ animationDelay: `${Math.min(ti, 6) * 50}ms` }}
-              className={`animate-rise min-w-[12.5rem] max-w-[17rem] shrink-0 snap-start rounded-2xl p-3.5 text-start ring-1 transition duration-300 motion-reduce:transition-none ${on ? '-translate-y-0.5 bg-brand-600 text-white shadow-lift ring-brand-600' : 'bg-white ring-neutral-200 hover:-translate-y-0.5 hover:shadow-soft hover:ring-brand-200'}`}
-            >
-              <span className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-white/60" style={{ background: STATES[st].color }} />
-                <span className="truncate text-sm font-extrabold">{p.name || 'مشروع بدون اسم'}</span>
-              </span>
-              <span className={`mt-2.5 block h-1.5 overflow-hidden rounded-full ${on ? 'bg-white/25' : 'bg-neutral-100'}`}>
-                <span className={`block h-full rounded-full transition-[width] duration-700 ${on ? 'bg-white' : 'bg-gradient-to-l from-brand-400 to-brand-600'}`} style={{ width: `${pr.pct}%` }} />
-              </span>
-              <span className={`mt-1.5 block truncate text-xs font-semibold ${on ? 'text-white/80' : 'text-neutral-400'}`}>
-                {n(pr.pct)}% · {STATES[st].label}{!p.finished && k !== null && k >= 0 ? ` · بعد ${n(k)} يوم` : ''}
-              </span>
-            </button>
-          );
-        })}
-        <button type="button" onClick={() => setModal('project')} className="flex min-w-[10rem] shrink-0 items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-brand-200 px-4 text-sm font-bold text-brand-700 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-50">
-          <PlusIcon className="h-4 w-4" />إضافة مشروع
-        </button>
-      </div>
+      <ProjectTabs key={`${fStatus}-${fOutcome}`} tabs={tabs} activeId={project.id} onSelect={select} onAdd={() => setModal('project')} />
 
       {/* key = تتعمل animation جديدة كل ما تبدّلي المشروع */}
       {hasOpen ? (
@@ -205,10 +199,11 @@ function ProjectModal({ config, onSubmit, onClose }) {
   return (
     <FormModal title="📁 إنشاء مشروع جديد" submitText="إنشاء المشروع" onClose={onClose}
       fields={[
+        { name: 'startDate', label: 'تاريخ البداية', type: 'date', required: true, defaultValue: new Date().toISOString().slice(0, 10) },
         { name: 'name', label: 'اسم المشروع' },
         { name: 'deliveryDate', label: 'تاريخ التسليم', type: 'date', defaultValue: config?.projectDefaults?.deliveryDate || '' },
         { name: 'inquiryDate', label: 'تاريخ الاستفسارات', type: 'date', defaultValue: config?.projectDefaults?.inquiryDate || '' },
-        { name: 'note', label: 'ملحوظة على المشروع (اختياري)', type: 'textarea' },
+        { name: 'note', label: 'ملحوظة على المشروع (اختياري)', placeholder: 'اكتبي ملحوظة يطّلع عليها فريق الحصر' },
       ]}
       onSubmit={onSubmit} />
   );

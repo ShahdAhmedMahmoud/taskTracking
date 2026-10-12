@@ -27,7 +27,7 @@ export const normField = (x) => ({
   sortOrder: x.sortOrder ?? x.SortOrder ?? 0,
 });
 
-export const newTaskState = (applicable) => ({ status: false, review: false, applicable: !!applicable, dueDate: '', department: '', notes: '' });
+export const newTaskState = () => ({ status: false, review: false, applicable: false, startDate: '', startTime: '', dueDate: '', dueTime: '', department: '', notes: '' });
 
 export function makeNewProject(tasks, config, { name = '', deliveryDate = '', inquiryDate = '' } = {}) {
   const t = {};
@@ -52,8 +52,9 @@ export function normalizeEngineer(data, tasks) {
     tasks.forEach((t) => {
       if (!p.tasks[t.id]) p.tasks[t.id] = newTaskState(t.applicable);
       if (typeof p.tasks[t.id].notes !== 'string') p.tasks[t.id].notes = '';
+      if (typeof p.tasks[t.id].startTime !== 'string') p.tasks[t.id].startTime = '';
     });
-    p.customTasks.forEach((c) => { if (typeof c.notes !== 'string') c.notes = ''; });
+    p.customTasks.forEach((c) => { if (typeof c.notes !== 'string') c.notes = ''; if (typeof c.startTime !== 'string') c.startTime = ''; });
   });
   return data;
 }

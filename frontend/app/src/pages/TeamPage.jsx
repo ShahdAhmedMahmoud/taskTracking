@@ -8,6 +8,7 @@ import StatCard from '../components/ui/StatCard';
 import FormModal from '../components/ui/FormModal';
 import EngineerCard from '../components/EngineerCard';
 import ProjectRow from '../components/ProjectRow';
+import Pagination from '../components/ui/Pagination';
 import { Empty } from '../components/ui/Loader';
 import { teamLabel } from '../utils/helpers';
 import { engineerStats, getAllProjects, teamStats } from '../utils/stats';
@@ -19,6 +20,7 @@ export default function TeamPage() {
   const { confirm } = useUI();
   const nav = useNavigate();
   const [adding, setAdding] = useState(false);
+  const [projectPage, setProjectPage] = useState(1);
 
   const teamId = session.role === 'team' ? session.id : p;
   const team = teams.find((t) => t.id === teamId);
@@ -26,6 +28,10 @@ export default function TeamPage() {
 
   const s = teamStats(team, engineers, tasks);
   const projects = getAllProjects([team], engineers, tasks);
+  const projectPageSize = 5;
+  const projectPageCount = Math.max(1, Math.ceil(projects.length / projectPageSize));
+  const safeProjectPage = Math.min(projectPage, projectPageCount);
+  const visibleProjects = projects.slice((safeProjectPage - 1) * projectPageSize, safeProjectPage * projectPageSize);
   const base = session.role === 'team' ? '/engineers/' : '/engineers/';
 
   const remove = async (e) => {
@@ -56,12 +62,13 @@ export default function TeamPage() {
       <h2 className="mb-3 mt-8 font-extrabold">مشاريع الفريق — بالأقرب لموعد التسليم ({projects.length})</h2>
       {projects.length ? (
         <div className="space-y-3">
-          {projects.map((x, i) => (
-            <ProjectRow key={x.project.id} rank={i + 1} project={x.project} stats={x.stats} sub={x.eng.name}
+          {visibleProjects.map((x, i) => (
+            <ProjectRow key={x.project.id} rank={(safeProjectPage - 1) * projectPageSize + i + 1} project={x.project} stats={x.stats} sub={x.eng.name}
               onClick={() => { localStorage.setItem('tender-dashboard-active-project:' + x.eng.id, x.project.id); nav(base + x.eng.id); }} />
           ))}
         </div>
       ) : <Empty icon="📁" title="لا توجد مشاريع بعد" />}
+      <Pagination page={safeProjectPage} pageCount={projectPageCount} pageSize={projectPageSize} itemCount={projects.length} onChange={setProjectPage} />
 
       {adding && (
         <FormModal title="➕ إضافة مهندس جديد" submitText="إضافة" onClose={() => setAdding(false)}

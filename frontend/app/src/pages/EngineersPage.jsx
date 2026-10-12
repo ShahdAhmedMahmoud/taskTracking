@@ -6,6 +6,7 @@ import Segmented from '../components/ui/Segmented';
 import EngineerTile from '../components/engineers/EngineerTile';
 import { teamLabel } from '../utils/helpers';
 import { n, daysLeft, projectProgress, stateOf } from '../utils/dashboardData';
+import { taskDurationHours } from '../utils/stats';
 
 const SORTS = [
   ['load', 'الأكثر مشاريع جارية'],
@@ -24,7 +25,10 @@ function metricsOf(data) {
   const decided = counts.won + counts.lost;
 
   let td = 0; let tt = 0;
-  running.forEach((p) => { const r = projectProgress(p); td += r.done; tt += r.total; });
+  projects.forEach((p) => { const r = projectProgress(p); td += r.done; tt += r.total; });
+  const completedHours = projects.reduce((sum, p) => sum + [
+    ...Object.values(p.tasks || {}), ...(p.customTasks || []),
+  ].filter((task) => task?.applicable && task?.status).reduce((hours, task) => hours + taskDurationHours(task), 0), 0);
 
   const dated = running
     .map((p) => ({ p, k: daysLeft(p.deliveryDate) }))
@@ -35,7 +39,7 @@ function metricsOf(data) {
     counts,
     delivered: counts.pending + decided,
     winPct: decided ? Math.round((counts.won / decided) * 100) : null,
-    td, tt,
+    td, tt, completedHours,
     pct: tt ? Math.round((td / tt) * 100) : 0,
     next: dated[0] || null,
     overdue: dated.filter((x) => x.k < 0).length,

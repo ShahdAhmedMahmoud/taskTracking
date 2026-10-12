@@ -805,7 +805,7 @@ export default function TaskTemplatePicker({ project, onApply, onClose, canManag
     setQ(''); setDeptFilter([]); setTf('all'); setEditing(null); setDraft(null); setSaveAs(null);
     setStep('tasks');
   };
-  const openTemplate = (tpl) => load(tpl, tpl.extraTasks || [], resolveIds(tpl, tasks));
+  const openTemplate = (tpl) => load(tpl, tpl.extraTasks || [], tpl.id === DEFAULT_TEMPLATE.id ? currentIds : resolveIds(tpl, tasks));
   const openCurrent = () => load({ id: CURRENT, name: 'المهام الحالية للمشروع', departments: [], responsible: currentResp }, currentExtras, currentIds);
   const openNew = () => { load({ id: NEW, name: 'قالب جديد', departments: [], responsible: {} }, [], []); setSaveAs({ name: '', departments: [] }); };
 
@@ -821,7 +821,7 @@ export default function TaskTemplatePicker({ project, onApply, onClose, canManag
     const on = sel.has(it.id);
     return okText && okDept && (tf === 'all' || (tf === 'on' ? on : !on));
   });
-  const visTpls = templates.filter((t) => !tplFilter.length || (t.departments || []).some((d) => tplFilter.includes(d)));
+  const visTpls = templates.filter((t) => t.id === DEFAULT_TEMPLATE.id && (!tplFilter.length || (t.departments || []).some((d) => tplFilter.includes(d))));
 
   /* ---------- أفعال المهام ---------- */
   const toggle = (id) => setSel((p) => { const x = new Set(p); if (x.has(id)) x.delete(id); else x.add(id); return x; });
@@ -957,7 +957,7 @@ export default function TaskTemplatePicker({ project, onApply, onClose, canManag
                     </li>
                   );
                 })}
-
+{/* 
                 {project.tasks && (
                   <li>
                     <button type="button" onClick={openCurrent} className="grid h-full min-h-[10rem] w-full place-content-center justify-items-center gap-1.5 rounded-2xl border-2 border-dashed border-brand-200 bg-white/60 p-4 text-center transition hover:-translate-y-1 hover:bg-brand-50/60">
@@ -966,7 +966,7 @@ export default function TaskTemplatePicker({ project, onApply, onClose, canManag
                       <span className="text-xs font-semibold text-slate-400">{n(currentIds.length + currentExtras.length)} مهمة مفعّلة دلوقتي</span>
                     </button>
                   </li>
-                )}
+                )} */}
                 {canManage && (
                   <li>
                     <button type="button" onClick={openNew} className="grid h-full min-h-[10rem] w-full place-content-center justify-items-center gap-1.5 rounded-2xl border-2 border-dashed border-slate-300 bg-white/60 p-4 text-center transition hover:-translate-y-1 hover:border-brand-300 hover:bg-brand-50/60">

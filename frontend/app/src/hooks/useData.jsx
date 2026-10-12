@@ -131,21 +131,27 @@ export function DataProvider({ children }) {
     const synced = new Set();
     try {
       const unsynced = data.projects.filter((p) => !p.hasrSynced);
-      if (unsynced.length) {
-        const hasrTeam = ts.find((t) => t.type === 'hasr');
-        if (hasrTeam) {
-          const eng = ts.flatMap((t) => t.engineers).find((e) => e.id === engId);
-          const list = await fetchHasr(hasrTeam.id);
-          unsynced.forEach((p) => {
-            const id = 'sync_' + p.id;
-            if (!list.some((x) => x.id === id)) {
-              list.push({ id, name: p.name || 'مشروع بدون اسم', deliveryDate: p.deliveryDate || '', addedBy: eng?.name || '', hasWork: null, hasrDueDate: '', hasrDone: false, hasrNotes: '' });
-            }
-          });
+      const hasrTeam = ts.find((t) => t.type === 'hasr');
+      if (hasrTeam && (unsynced.length || data.projects.some((p) => p.note))) {
+        const eng = ts.flatMap((t) => t.engineers).find((e) => e.id === engId);
+        const list = await fetchHasr(hasrTeam.id);
+        let hasrChanged = false;
+        data.projects.forEach((p) => {
+          const id = 'sync_' + p.id;
+          const index = list.findIndex((x) => x.id === id);
+          if (index < 0 && !p.hasrSynced) {
+            list.push({ id, name: p.name || 'مشروع بدون اسم', deliveryDate: p.deliveryDate || '', addedBy: eng?.name || '', hasWork: null, hasrDueDate: '', hasrDone: false, hasrNotes: '', projectNote: p.note || '' });
+            hasrChanged = true;
+          } else if (index >= 0 && p.note && list[index].projectNote !== p.note) {
+            list[index] = { ...list[index], projectNote: p.note };
+            hasrChanged = true;
+          }
+          if (!p.hasrSynced) synced.add(p.id);
+        });
+        if (hasrChanged) {
           await saveHasrApi(hasrTeam.id, list);
           setHasr((h) => ({ ...h, [hasrTeam.id]: list }));
         }
-        unsynced.forEach((p) => synced.add(p.id));
       }
       const payload = { ...data, lastSaved: now, projects: data.projects.map((p) => (synced.has(p.id) ? { ...p, hasrSynced: true } : p)) };
       await saveEngineerApi(engId, payload);

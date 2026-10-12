@@ -291,7 +291,7 @@ export default function EngineerTile({ eng, team, m, delay = 0, ready = true, va
 
         <div className="hidden w-40 shrink-0 md:block">
           <div className="mb-1 flex justify-between text-xs font-bold text-slate-400">
-            <span>الإنجاز</span><span className="tabular-nums text-brand-700">{m.counts.running ? `${n(m.pct)}%` : '—'}</span>
+            <span>{n(m.td)} من {n(m.tt)} مهمة</span><span className="tabular-nums text-brand-700">{m.tt ? `${n(m.pct)}%` : '—'}</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-slate-100">
             <div className="h-full rounded-full bg-gradient-to-l from-sky-300 to-brand-600 transition-[width] duration-1000 ease-out" style={{ width: `${ready ? m.pct : 0}%` }} />
@@ -333,16 +333,18 @@ export default function EngineerTile({ eng, team, m, delay = 0, ready = true, va
           <span className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-extrabold ring-1 ${load.pill}`}>{load.label}</span>
         </div>
         <div className="shrink-0">
-          {m.counts.running
+          {m.tt
             ? <ProgressRing pct={m.pct} size={68} stroke={7} />
             : <div className="grid h-[68px] w-[68px] place-items-center rounded-full text-lg font-bold text-slate-300 ring-1 ring-slate-200">—</div>}
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+      <div className="mt-5 grid grid-cols-2 gap-2 text-center sm:grid-cols-3">
         {[
+          ['المهام المنجزة', `${n(m.td)} / ${n(m.tt)}`, 'text-brand-700'],
           ['جارية', n(m.counts.running), 'text-sky-600'],
           ['سلّمت', n(m.delivered), 'text-brand-700'],
+          ['نسبة الإنجاز', m.tt ? `${n(m.pct)}%` : '—', 'text-emerald-600'],
           ['نسبة الفوز', m.winPct === null ? '—' : `${n(m.winPct)}%`, 'text-emerald-600'],
         ].map(([label, v, c]) => (
           <div key={label} className="rounded-xl bg-slate-50 py-2.5 transition duration-300 group-hover/eng:bg-brand-50/60">

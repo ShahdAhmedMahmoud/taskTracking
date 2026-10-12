@@ -52,6 +52,7 @@ export default function HasrPage() {
                   <span className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${toneChip[di.tone]}`}>{di.text}</span>
                   <button onClick={() => remove(item)} className="rounded-lg p-2 text-neutral-400 hover:bg-brand-50 hover:text-brand-600">🗑</button>
                 </div>
+                {item.projectNote && <div className="mt-3 rounded-xl border border-brand-100 bg-brand-50/70 px-3.5 py-3"><p className="text-[11px] font-extrabold text-brand-700">ملحوظة المشروع من المهندس{item.addedBy ? ` · ${item.addedBy}` : ''}</p><p className="mt-1 text-sm leading-6 text-neutral-700">{item.projectNote}</p></div>}
                 <div className="mt-4 flex flex-wrap items-end gap-4 border-t border-neutral-100 pt-4">
                   <div><span className="label">هل يوجد عمل حصر؟</span>
                     <div className="flex gap-2">

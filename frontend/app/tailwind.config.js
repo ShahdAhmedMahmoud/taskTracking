@@ -58,11 +58,11 @@ export default {
           "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
-      animation: {
-        floaty: "floaty 6s ease-in-out infinite",
-        rise: "rise .5s ease-out both",
-        "fade-up": "rise .5s ease-out both",
-      },
+animation: {
+  floaty: 'floaty 6s ease-in-out infinite',
+  rise: 'rise .5s ease-out backwards',
+  'fade-up': 'rise .5s ease-out backwards',
+},
     },
   },
   plugins: [],

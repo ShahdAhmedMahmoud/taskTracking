@@ -655,7 +655,7 @@ import RadarChart from '../components/charts/RadarChart';
 import { ProjectsIcon, ClockIcon, CheckIcon, TrophyIcon, ChevronDownIcon } from '../components/ui/Icons';
 import { LayersIcon } from '../components/engineer/EngineerIcons';
 import { mainTeams, teamLabel } from '../utils/helpers';
-import { teamStats, pctOf } from '../utils/stats';
+import { teamStats, pctOf, taskDurationHours } from '../utils/stats';
 import {
   n, STATES, stateOf, daysLeft, inPeriod, collectProjects,
   periodResults, deliveriesTimeline, teamBreakdown,
@@ -673,7 +673,7 @@ const PAGE_SIZE = 50;          // الصفحات بتبدأ بعد ٥٠ مهند
 const SCROLL_AFTER = 10;       // الـ scroll بيبدأ بعد ١٠ صفوف (الصف ≈ ٣.٨ rem + الهيدر)
 const TABLE_MAX_H = '41rem';
 const COLS = [
-  ['name', 'المهندس'], ['tasksPct', 'إنجاز المهام'], ['projects', 'المشاريع'], ['running', 'جارية'],
+  ['name', 'المهندس'], ['tasksPct', 'المهام المنجزة / الإجمالي · %'], ['projects', 'المشاريع'], ['running', 'جارية'],
   ['delivered', 'منتهية'], ['won', 'فوز'], ['lost', 'خسارة'], ['winPct', 'نسبة الفوز'], ['late', 'متأخر'],
 ];
 
@@ -728,7 +728,7 @@ function MiniEngTable({ rows, readOnly }) {
         <thead>
           <tr className="border-b border-slate-100 text-xs font-bold text-slate-400">
             <th className="pb-3 text-start">المهندس</th>
-            {['إنجاز المهام', 'المشاريع', 'جارية', 'منتهية', 'فوز', 'خسارة'].map((h) => <th key={h} className="pb-3 text-center">{h}</th>)}
+            {['المهام المنجزة / الإجمالي · %', 'المشاريع', 'جارية', 'منتهية', 'فوز', 'خسارة'].map((h) => <th key={h} className="pb-3 text-center">{h}</th>)}
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-50">
@@ -740,7 +740,7 @@ function MiniEngTable({ rows, readOnly }) {
                   <span className="truncate font-bold">{r.e.name}</span>
                 </MaybeLink>
               </td>
-              <td className="text-center font-extrabold tabular-nums text-brand-700">{n(r.tasks.pct)}%</td>
+              <td className="text-center font-extrabold tabular-nums text-brand-700">{n(r.tasks.done)} / {n(r.tasks.total)} · {n(r.tasks.pct)}%</td>
               <td className="text-center tabular-nums">{n(r.c.total)}</td>
               <td className="text-center tabular-nums text-sky-600">{n(r.c.running)}</td>
               <td className="text-center tabular-nums">{n(r.c.finished)}</td>
@@ -792,8 +792,8 @@ export default function ReportsPage() {
   const taskTotals = useMemo(() => {
     const t = main.reduce((a, team) => {
       const s = teamStats(team, engineers, tasks);
-      return { done: a.done + s.done, total: a.total + s.total };
-    }, { done: 0, total: 0 });
+      return { done: a.done + s.done, total: a.total + s.total, completedHours: a.completedHours + s.completedHours };
+    }, { done: 0, total: 0, completedHours: 0 });
     return { ...t, left: t.total - t.done, pct: pctOf(t.done, t.total) };
   }, [main, engineers, tasks]);
   const avgRunning = useMemo(() => {
@@ -863,7 +863,7 @@ export default function ReportsPage() {
       const decided = inP.won + inP.lost;
       return {
         e, t, name: e.name,
-        tasksPct: tasksOf(mine).pct,
+        ...tasksOf(mine), tasksPct: tasksOf(mine).pct,
         projects: c.total, running: c.running, late: c.late,
         delivered: inP.pending + decided, won: inP.won, lost: inP.lost, pending: inP.pending,
         winPct: decided ? Math.round((inP.won / decided) * 100) : null,
@@ -896,8 +896,14 @@ export default function ReportsPage() {
       const mine = items.filter((x) => x.engineer.id === e.id);
       return { e, c: projectCounts(mine), tasks: tasksOf(mine) };
     });
-    return { t, pct: pctOf(s.done, s.total), c: projectCounts(items), rows };
+    return { t, pct: pctOf(s.done, s.total), taskDone: s.done, taskTotal: s.total, completedHours: s.completedHours, c: projectCounts(items), rows };
   }), [saudiTeams, engineers, tasks]);
+  const teamHoursRows = [
+    ...teamRows.map(({ t, color, s, pct }) => ({ team: t, color, hours: s.completedHours, done: s.done, total: s.total, pct })),
+    ...saudi.map(({ t, completedHours, taskDone, taskTotal, pct }) => ({ team: t, color: t.color || '#38BDF8', hours: completedHours, done: taskDone, total: taskTotal, pct })),
+  ].sort((a, b) => b.hours - a.hours);
+  const maxTeamHours = Math.max(1, ...teamHoursRows.map((row) => row.hours));
+  const allTeamHours = teamHoursRows.reduce((sum, row) => sum + row.hours, 0);
 
   /* ---------- قسم الحصر ---------- */
   const hasrSections = useMemo(() => hasrTeams.map((t) => {
@@ -907,8 +913,8 @@ export default function ReportsPage() {
 
   /* ---------- تصدير CSV (بيفتح عربي صح في Excel) ---------- */
   const exportCsv = () => {
-    const head = ['المهندس', 'الفريق', 'إنجاز المهام %', 'المشاريع', 'جارية', 'منتهية', 'فوز', 'خسارة', 'معلق', 'نسبة الفوز %', 'متأخر'];
-    const lines = shownRows.map((r) => [r.name, teamLabel(r.t), r.tasksPct, r.projects, r.running, r.delivered, r.won, r.lost, r.pending, r.winPct ?? '', r.late]);
+    const head = ['المهندس', 'الفريق', 'المهام المنجزة', 'إجمالي المهام', 'إنجاز المهام %', 'المشاريع', 'جارية', 'منتهية', 'فوز', 'خسارة', 'معلق', 'نسبة الفوز %', 'متأخر'];
+    const lines = shownRows.map((r) => [r.name, teamLabel(r.t), r.done, r.total, r.tasksPct, r.projects, r.running, r.delivered, r.won, r.lost, r.pending, r.winPct ?? '', r.late]);
     const csv = `\uFEFF${[head, ...lines].map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')}`;
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a');
@@ -951,7 +957,7 @@ export default function ReportsPage() {
 
           <div>
             <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-              {[['مهام إجمالية', taskTotals.total], ['منجزة', taskTotals.done], ['متبقية', taskTotals.left]].map(([l, v]) => (
+              {[['مهام إجمالية', taskTotals.total], ['منجزة', taskTotals.done], ['متبقية', taskTotals.left], ['ساعات محسوبة', `${n(taskTotals.completedHours)} س`]].map(([l, v]) => (
                 <div key={l} className="rounded-2xl bg-white/12 px-3 py-3.5 text-center ring-1 ring-white/20 backdrop-blur">
                   <p className="text-2xl font-extrabold tabular-nums sm:text-3xl">{n(v)}</p>
                   <p className="mt-0.5 text-xs font-semibold text-white/75">{l}</p>
@@ -1069,6 +1075,38 @@ export default function ReportsPage() {
           })}
         </div>
       )}
+
+      {/* ===== ساعات المهام المنجزة حسب الفريق ===== */}
+      <SectionTitle eyebrow="وقت العمل" title="ساعات المهام المنجزة حسب الفريق" hint="تُحسب من وقت بداية المهمة إلى موعد انتهائها، للمهام المنجزة فقط" />
+      <section className="relative overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50/45 to-sky-50/60 p-5 shadow-soft sm:p-7 print:break-inside-avoid">
+        <div aria-hidden className="pointer-events-none absolute -end-14 -top-20 h-56 w-56 rounded-full bg-brand-200/35 blur-3xl" />
+        <div className="relative grid gap-5 lg:grid-cols-[minmax(13rem,.7fr)_minmax(12rem,1fr)_minmax(0,1.6fr)] lg:items-center">
+          <div className="rounded-2xl bg-white/85 p-5 ring-1 ring-brand-100 shadow-sm">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-xl text-brand-700">◷</span>
+            <p className="mt-4 text-sm font-bold text-neutral-500">إجمالي ساعات كل الفرق</p>
+            <p className="mt-1 text-4xl font-black tabular-nums tracking-tight text-brand-900">{n(allTeamHours)} <span className="text-base font-bold text-neutral-400">ساعة</span></p>
+            <p className="mt-2 text-xs leading-5 text-neutral-400">تشمل فرق القسم الرئيسي وفريق السعودية. تُجمع مدة المهام المحددة كمنجزة.</p>
+          </div>
+          <div className="rounded-2xl bg-white/75 px-3 py-4 ring-1 ring-brand-100">
+            <DonutChart size={190} stroke={24} centerValue={n(allTeamHours)} centerLabel="ساعة إجمالًا" segments={teamHoursRows.filter((row) => row.hours > 0).map((row) => ({ label: teamLabel(row.team), color: row.color, value: row.hours }))} />
+            <p className="mt-2 text-center text-xs font-semibold text-neutral-400">حصة كل فريق من إجمالي الساعات</p>
+          </div>
+          <div className="space-y-3">
+            {teamHoursRows.length === 0 ? <p className="rounded-2xl bg-white/80 p-6 text-center text-sm text-neutral-400">لا توجد فرق لعرض ساعاتها بعد.</p> : teamHoursRows.map((row, i) => (
+              <article key={row.team.id} className="rounded-2xl bg-white/85 p-3.5 ring-1 ring-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft sm:p-4">
+                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                  <div className="min-w-0"><h3 className="truncate text-sm font-extrabold text-neutral-800">{isSaudiTeam(row.team) ? '🇸🇦 ' : ''}{teamLabel(row.team)}</h3><p className="mt-0.5 text-xs font-semibold text-neutral-400">{n(row.done)} من {n(row.total)} مهمة · {n(row.pct)}% إنجاز · {allTeamHours ? n(Math.round((row.hours / allTeamHours) * 100)) : 0}% من الساعات</p></div>
+                  <p className="shrink-0 text-lg font-black tabular-nums text-brand-800">{n(row.hours)} <span className="text-xs font-bold text-neutral-400">س</span></p>
+                </div>
+                <div className="mt-3 h-3 overflow-hidden rounded-full bg-neutral-100" role="progressbar" aria-label={`ساعات فريق ${teamLabel(row.team)} مقارنة بأعلى فريق`} aria-valuenow={Math.round((row.hours / maxTeamHours) * 100)} aria-valuemin={0} aria-valuemax={100}>
+                  <div className="h-full rounded-full transition-[width] duration-1000 ease-out" style={{ width: `${(row.hours / maxTeamHours) * 100}%`, background: `linear-gradient(90deg, ${row.color}88, ${row.color})`, transitionDelay: `${Math.min(i, 8) * 60}ms` }} />
+                </div>
+              </article>
+            ))}
+            {allTeamHours === 0 && <p className="px-2 text-xs leading-5 text-neutral-400">حددي وقت البداية والنهاية للمهام، ثم علّمي المهمة كمنجزة ليظهر مجموع ساعاتها هنا.</p>}
+          </div>
+        </div>
+      </section>
 
       {/* ===== الحركات + المواعيد + الجولات ===== */}
       <SectionTitle eyebrow="النشاط" title="آخر الحركات والمواعيد" hint="تسليمات وجولات ومواعيد قريبة" />
@@ -1210,9 +1248,9 @@ export default function ReportsPage() {
                     </MaybeLink>
                   </td>
                   <td className="px-2">
-                    <div className="mx-auto flex max-w-[8rem] items-center gap-2">
+                    <div className="mx-auto flex max-w-[11rem] flex-col items-center gap-1">
                       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-brand-500 transition-[width] duration-1000 motion-reduce:transition-none" style={{ width: `${ready ? r.tasksPct : 0}%` }} /></div>
-                      <span className="text-xs font-bold tabular-nums text-slate-500">{n(r.tasksPct)}%</span>
+                      <span className="text-xs font-bold tabular-nums text-slate-500">{n(r.done)} / {n(r.total)} · {n(r.tasksPct)}%</span>
                     </div>
                   </td>
                   <td className="text-center font-extrabold tabular-nums text-slate-700">{n(r.projects)}</td>
@@ -1253,15 +1291,16 @@ export default function ReportsPage() {
       </Panel>
 
       {/* ===== قسم السعودية ===== */}
-      {saudi.map(({ t, pct, c, rows }) => (
+      {saudi.map(({ t, pct, taskDone, taskTotal, completedHours, c, rows }) => (
         <div key={t.id}>
           <SectionTitle icon="🇸🇦" eyebrow="قسم السعودية" title={`${teamLabel(t)} (مدير: ${t.manager})`} />
           <div className="grid gap-4 lg:grid-cols-12 print:break-inside-avoid">
-            <Panel className="lg:col-span-4" delay={60} title="نسبة إنجاز المهام" subtitle={`${n(c.total)} مشروع`}>
+            <Panel className="lg:col-span-4" delay={60} title="إنجاز المهام والساعات" subtitle={`${n(c.total)} مشروع · ${n(taskDone)} من ${n(taskTotal)} مهمة (${n(pct)}%)`}>
               <div className="flex flex-col items-center gap-4">
                 <RadialGauge value={pct} size={150} stroke={13} ready={ready} label="إنجاز" color="#10B981" trackColor="#ECFDF5" textClass="text-emerald-600" />
                 <div className="grid w-full grid-cols-2 gap-2">
                   <Tile label="إجمالي المشاريع" value={c.total} />
+                  <Tile label="ساعات محسوبة للمهام" value={completedHours} tone="text-brand-700" />
                   <Tile label="جارية" value={c.running} tone="text-sky-600" />
                   <Tile label={lab('won')} value={c.won} tone="text-emerald-600" />
                   <Tile label={lab('lost')} value={c.lost} tone="text-rose-600" />

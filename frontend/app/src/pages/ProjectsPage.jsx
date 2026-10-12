@@ -3,10 +3,11 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useData } from '../hooks/useData';
 import PageHeader from '../components/ui/PageHeader';
 import Panel from '../components/ui/Panel';
+import Pagination from '../components/ui/Pagination';
 import Avatar from '../components/ui/Avatar';
 import { ProjectsIcon, ClockIcon, CheckIcon, CalendarIcon, ArrowIcon } from '../components/ui/Icons';
 import { NoteIcon, LayersIcon } from '../components/engineer/EngineerIcons';
-import { mainTeams, teamLabel } from '../utils/helpers';
+import { teamLabel } from '../utils/helpers';
 import { STATES, n, stateOf, daysLeft, projectProgress, collectProjects } from '../utils/dashboardData';
 
 /* ================= ثوابت ================= */
@@ -168,6 +169,7 @@ export default function ProjectsPage() {
   const [q, setQ] = useState('');
   const [teamId, setTeamId] = useState('all');
   const [sort, setSort] = useState('auto');
+  const [page, setPage] = useState(1);
 
   const rawStatus = sp.get('status');
   const status = ['running', 'late', 'delivered'].includes(rawStatus) ? rawStatus : 'all';
@@ -181,8 +183,8 @@ export default function ProjectsPage() {
 
   const lab = (k) => (k === 'won' || k === 'lost' ? outcomeLabel(k, STATES[k].label) : STATES[k].label);
 
-  const main = useMemo(() => mainTeams(teams), [teams]);
-  const all = useMemo(() => collectProjects(main, engineers), [main, engineers]);
+  const projectTeams = useMemo(() => teams.filter((team) => team.type !== 'hasr'), [teams]);
+  const all = useMemo(() => collectProjects(projectTeams, engineers), [projectTeams, engineers]);
 
   const term = q.trim().toLowerCase();
   const base = useMemo(
@@ -204,6 +206,11 @@ export default function ProjectsPage() {
     () => base.filter(({ p }) => matches(p, status, outcome)).sort(SORTERS[sort]),
     [base, status, outcome, sort],
   );
+  const pageSize = 5;
+  const pageCount = Math.max(1, Math.ceil(list.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const pageItems = list.slice((safePage - 1) * pageSize, safePage * pageSize);
+  useEffect(() => { setPage(1); }, [q, teamId, sort, status, outcome]);
 
   /* ---------- الجولات: إجمالي + أقرب الجولات القادمة ---------- */
   const roundsInfo = useMemo(() => {
@@ -294,7 +301,7 @@ export default function ProjectsPage() {
           />
         </label>
         {[
-          ['الفريق', teamId, setTeamId, [['all', 'كل الفرق'], ...main.filter((t) => t.engineers.length).map((t) => [t.id, teamLabel(t)])]],
+          ['الفريق', teamId, setTeamId, [['all', 'كل الفرق'], ...projectTeams.filter((t) => t.engineers.length).map((t) => [t.id, teamLabel(t)])]],
           ['ترتيب', sort, setSort, SORTS],
         ].map(([label, value, set, opts]) => (
           <label key={label} className="flex items-center gap-2 text-sm font-bold text-neutral-400">
@@ -329,9 +336,10 @@ export default function ProjectsPage() {
             </div>
           ) : (
             <div key={`${status}-${outcome}-${sort}-${teamId}`} className="space-y-3">
-              {list.map((item, i) => <ProjectRow key={`${item.engineer.id}-${item.p.id ?? i}`} item={item} i={i} lab={lab} />)}
+              {pageItems.map((item, i) => <ProjectRow key={`${item.engineer.id}-${item.p.id ?? i}`} item={item} i={i} lab={lab} />)}
             </div>
           )}
+          <Pagination page={safePage} pageCount={pageCount} pageSize={pageSize} itemCount={list.length} onChange={setPage} />
         </div>
 
         <aside className="space-y-5 lg:col-span-4 lg:sticky lg:top-4 lg:self-start">

@@ -6,6 +6,7 @@ import ProgressRing from '../components/ui/ProgressRing';
 import Avatar from '../components/ui/Avatar';
 import { teamLabel } from '../utils/helpers';
 import { teamStats } from '../utils/stats';
+import { n } from '../utils/dashboardData';
 
 export default function TeamsPage() {
   const { teams, engineers, tasks, hasr } = useData();
@@ -35,7 +36,8 @@ export default function TeamsPage() {
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate font-extrabold">{t.division === 'saudi' ? '🇸🇦 ' : ''}{teamLabel(t)}</h3>
                   <p className="truncate text-sm text-neutral-500">مدير الفريق: {t.manager}</p>
-                  <p className="mt-1 text-xs font-bold text-neutral-400">{s.done}/{s.total} مهمة · {t.engineers.length} مهندسين</p>
+                  <p className="mt-1 text-xs font-bold text-neutral-500">{s.done}/{s.total} مهمة · {s.pct}% إنجاز</p>
+                  <p className="mt-1 text-xs font-semibold text-neutral-400">{n(t.engineers.length)} مهندسين</p>
                 </div>
               </div>
               <div className="mt-4 flex -space-x-2 space-x-reverse">{t.engineers.slice(0, 7).map((e) => <Avatar key={e.id} engineer={e} size={30} />)}</div>

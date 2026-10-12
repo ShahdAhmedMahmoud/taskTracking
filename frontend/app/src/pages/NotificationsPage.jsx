@@ -1,15 +1,25 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../hooks/useNotifications';
 import { useData } from '../hooks/useData';
 import { useAuth } from '../hooks/useAuth';
 import PageHeader from '../components/ui/PageHeader';
 import { Empty } from '../components/ui/Loader';
-
+import EngineerAlerts from '../components/ui/EngineerAlerts';
+import { useEngineerAlerts } from '../services/engineerAlerts';
 export default function NotificationsPage() {
   const { items, unread, markRead, markAll } = useNotifications();
+  const alerts = useEngineerAlerts();
   const { engineers } = useData();
   const { session } = useAuth();
   const nav = useNavigate();
+
+  // Opening the notification center means these notifications have been seen.
+  // Keep the list visible, but clear its unread state and the bell badge.
+  useEffect(() => {
+    markAll().catch(() => {});
+    alerts.markAll();
+  }, []);
 
   const open = async (n) => {
     if (!n.readAt) await markRead(n.id).catch(() => {});
@@ -21,6 +31,7 @@ export default function NotificationsPage() {
 
   return (
     <>
+    <EngineerAlerts />
       <PageHeader title="مركز الإشعارات" subtitle={unread ? `${unread} إشعار غير مقروء` : 'كله مقروء ✨'}
         actions={<button className="btn-ghost" onClick={markAll}>تحديد الكل كمقروء</button>} />
       {items.length ? (
