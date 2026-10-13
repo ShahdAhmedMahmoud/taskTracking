@@ -1615,7 +1615,7 @@ export default function TaskTemplatePicker({ project, onApply, onClose, canManag
 
                 <div className="min-w-0">
                   <span className="mb-1.5 block text-xs font-bold text-slate-500">القسم المسؤول</span>
-                  <ResponsibleDepartments inline value={deptFilter} onChange={(v) => setDeptFilter(splitDepts(v))} />
+                  <ResponsibleDepartments value={deptFilter} onChange={(v) => setDeptFilter(splitDepts(v))} />
                 </div>
               </div>
 

@@ -252,9 +252,9 @@ export default function HomePage() {
         </Panel>
 
         <div className="space-y-4 lg:col-span-5">
-          <Panel delay={140} title="ضغط العمل على المهندسين" subtitle="المهندسون الذين لديهم أكثر من مشروعين جاريين">
+          <Panel delay={140} title="ضغط العمل على المهندسين" subtitle="المهندسون الذين لديهم مشروعان جاريان أو أكثر">
             <ul className="space-y-4">
-              {workload.length === 0 && <li className="py-8 text-center text-sm text-neutral-400">لا يوجد مهندسون لديهم أكثر من مشروعين جاريين حاليًا</li>}
+              {workload.length === 0 && <li className="py-8 text-center text-sm text-neutral-400">لا يوجد مهندسون لديهم مشروعان جاريان أو أكثر حاليًا</li>}
               {workload.map(({ engineer, count, avg }, i) => (
                 <li key={engineer.id}>
                   <Link to={`/engineers/${engineer.id}`} className="group flex items-center gap-3">

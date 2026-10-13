@@ -66,8 +66,8 @@ export default function ScopedReportsPage() {
   const projectSegments = [
     { label: 'جارية', value: totals.running, color: '#414A9B' },
     { label: 'بانتظار نتيجة العميل', value: counts.pending, color: '#9AA3D8' },
-    { label: 'فوز', value: counts.won, color: '#2A317A' },
-    { label: 'خسارة', value: counts.lost, color: '#3C3C3B' },
+    { label: 'فوز', value: counts.won, color: '#16A34A' },
+    { label: 'خسارة', value: counts.lost, color: '#DC2626' },
   ];
   const taskSegments = [
     { label: 'مهام منجزة', value: totals.done, color: '#2A317A' },

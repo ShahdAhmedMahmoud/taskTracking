@@ -63,13 +63,13 @@ export const STATES = {
   },
   won: {
     label: "فوز",
-    color: "#2a317a",
-    pill: "bg-brand-50 text-brand-700 ring-brand-200",
+    color: "#16A34A",
+    pill: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   },
   lost: {
     label: "خسارة",
-    color: "#3c3c3b",
-    pill: "bg-brand-50 text-brand-600 ring-brand-200",
+    color: "#DC2626",
+    pill: "bg-rose-50 text-rose-700 ring-rose-200",
   },
 };
 
@@ -215,7 +215,7 @@ export function workloadByEngineer(all, limit = 5) {
   return [...map.values()]
     .map((x) => ({ ...x, avg: Math.round(x.pctSum / x.count) }))
     .sort((a, b) => b.count - a.count)
-    .filter((x) => x.count > 2)
+    .filter((x) => x.count >= 2)
     .slice(0, limit);
 }
 

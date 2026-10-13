@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { n } from '../../utils/dashboardData';
 
-const ROWS = [['won', 'فوز', '#2A317A'], ['pending', 'معلق', '#6f7dd0'], ['lost', 'خسارة', '#3c3c3b']];
+const ROWS = [['won', 'فوز', '#16A34A'], ['pending', 'معلق', '#6f7dd0'], ['lost', 'خسارة', '#DC2626']];
 const HATCH = 'repeating-linear-gradient(135deg, #e1e1e0 0 2px, transparent 2px 7px)';
 
 export default function StackedColumns({ data, height = 280 }) {
@@ -52,7 +52,7 @@ export default function StackedColumns({ data, height = 280 }) {
                   className={`flex w-full max-w-[3.5rem] flex-col gap-0.5 overflow-hidden rounded-2xl transition-all duration-300 ${dim ? 'opacity-40' : ''} ${active === i ? 'scale-x-110' : ''} ${d.total ? '' : 'border border-neutral-200'}`}
                   style={{ height: ready ? px : 0, transition: `height .8s cubic-bezier(.22,1,.36,1) ${i * 70}ms, opacity .3s, transform .3s`, backgroundImage: d.total ? undefined : HATCH }}
                 >
-                  {d.total > 0 && [['lost', '#3c3c3b'], ['pending', '#6f7dd0'], ['won', '#2A317A']].map(([k, c]) => (
+                  {d.total > 0 && [['lost', '#DC2626'], ['pending', '#6f7dd0'], ['won', '#16A34A']].map(([k, c]) => (
                     d[k] > 0 && <div key={k} style={{ flexGrow: d[k], flexBasis: 0, background: c }} />
                   ))}
                 </div>
