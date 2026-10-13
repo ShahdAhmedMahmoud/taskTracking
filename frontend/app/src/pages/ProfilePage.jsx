@@ -3,12 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useData } from '../hooks/useData';
 import { useUI } from '../hooks/useUI';
-import { saveProfile, savePhoto } from '../services/rosterService';
 import Avatar from '../components/ui/Avatar';
 import ProgressRing from '../components/ui/ProgressRing';
 import Panel from '../components/ui/Panel';
 import StatCard from '../components/ui/StatCard';
 import DeptProfile from '../components/profile/DeptProfile';
+import LocalProfileEditor from '../components/profile/LocalProfileEditor';
 import {
   CalendarIcon, CheckIcon, ClockIcon, TrophyIcon, ProjectsIcon, MailIcon, LogoutIcon,
   PencilIcon, SaveIcon, ShieldIcon, UserIcon, TeamsIcon,
@@ -64,7 +64,7 @@ function LogoutButton() {
 }
 
 /* =====================================================================
-   مدير الفريق: عرض فقط
+   مدير الفريق: تعديل بيانات محلي في الواجهة
    ===================================================================== */
 function ManagerProfile() {
   const { session } = useAuth();
@@ -97,19 +97,29 @@ function ManagerProfile() {
       </section>
 
       <div className="grid gap-4 lg:grid-cols-12">
-        <Panel className="lg:col-span-7" delay={60} title="الحساب" subtitle="بيانات حسابك الحالية">
-          <dl className="space-y-1">
-            {rows.map(([Icon, label, value]) => (
-              <div key={label} className="flex items-center gap-4 rounded-2xl p-3.5 transition duration-300 hover:bg-neutral-50">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-6 w-6" /></span>
-                <div className="min-w-0">
-                  <dt className="text-sm font-semibold text-neutral-400">{label}</dt>
-                  <dd className="truncate text-lg font-extrabold">{value}</dd>
+        <div className="space-y-4 lg:col-span-7">
+          <LocalProfileEditor
+            name={session.name}
+            role="مدير الفريق"
+            teamName={team ? teamLabel(team) : ''}
+            teamOptions={teams.filter((item) => item.type !== 'hasr').map(teamLabel)}
+            roleOptions={['مشرف فريق', 'مسؤول الفريق']}
+            accessOptions={['مشاهدة فقط', 'إدارة الفريق', 'مدير النظام']}
+          />
+          <Panel delay={60} title="الحساب" subtitle="بيانات الفريق والصلاحية">
+            <dl className="space-y-1">
+              {rows.filter(([, label]) => label !== 'الاسم').map(([Icon, label, value]) => (
+                <div key={label} className="flex items-center gap-4 rounded-2xl p-3.5 transition duration-300 hover:bg-neutral-50">
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-6 w-6" /></span>
+                  <div className="min-w-0">
+                    <dt className="text-sm font-semibold text-neutral-400">{label}</dt>
+                    <dd className="truncate text-lg font-extrabold">{value}</dd>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </dl>
-        </Panel>
+              ))}
+            </dl>
+          </Panel>
+        </div>
 
         <Panel className="lg:col-span-5" delay={120} title="إدارة الجلسة" subtitle="تسجيل الخروج">
           <LogoutButton />
@@ -129,7 +139,6 @@ function EngineerProfile() {
   const fileRef = useRef(null);
 
   const [busy, setBusy] = useState(false);
-  const [photoBusy, setPhotoBusy] = useState(false);
   const [ready, setReady] = useState(false);
   const [preview, setPreview] = useState(null);
   const [dirty, setDirty] = useState(false);
@@ -160,19 +169,12 @@ function EngineerProfile() {
     if (!ALLOWED.includes(file.type)) return toast('error', 'اختاري صورة PNG أو JPG أو WEBP');
     if (file.size > 8 * 1024 * 1024) return toast('error', 'الصورة كبيرة جداً (الحد الأقصى 8 ميجابايت)');
 
-    setPhotoBusy(true);
     try {
       const photoData = await toAvatarData(file);
       setPreview(photoData);
-      await savePhoto(session.id, photoData);
-      patchEngineerInfo(session.id, { photoData }); // يحدّث الصورة في الـ topbar وكل مكان
-      setPreview(null);
-      toast('success', 'تم تغيير الصورة وحفظها');
+      setDirty(true);
     } catch (e) {
-      setPreview(null);
-      toast('error', `تعذر حفظ الصورة: ${e.message}`, 5000);
-    } finally {
-      setPhotoBusy(false);
+      toast('error', `تعذّر تجهيز الصورة: ${e.message}`, 5000);
     }
   };
 
@@ -180,30 +182,23 @@ function EngineerProfile() {
     e.preventDefault();
     const f = new FormData(e.target);
     const payload = {
+      name: String(f.get('name') || '').trim(),
       companyEmail: String(f.get('email') || '').trim(),
       phoneNumber: String(f.get('phone') || '').trim(),
       employeeCode: String(f.get('code') || '').trim(),
       photoData: preview || eng?.photoData || null,
     };
+    if (!payload.name) return toast('error', 'اكتبي الاسم');
     if (payload.phoneNumber && !/^[0-9+\s-]{8,15}$/.test(payload.phoneNumber)) {
       return toast('error', 'رقم التليفون غير صالح');
     }
 
     setBusy(true);
-    try {
-      await saveProfile(session.id, payload);
-      patchEngineerInfo(session.id, {
-        companyEmail: payload.companyEmail,
-        phoneNumber: payload.phoneNumber,
-        employeeCode: payload.employeeCode,
-      });
-      setDirty(false);
-      toast('success', 'تم حفظ البروفايل بنجاح');
-    } catch (err) {
-      toast('error', `تعذر حفظ البروفايل: ${err.message}`, 5000);
-    } finally {
-      setBusy(false);
-    }
+    patchEngineerInfo(session.id, payload);
+    setPreview(null);
+    setDirty(false);
+    setBusy(false);
+    toast('success', 'تم تحديث البيانات في الواجهة. الحفظ الدائم يحتاج ربط Backend.');
   };
 
   return (
@@ -223,12 +218,10 @@ function EngineerProfile() {
                 </div>
               </div>
               <button
-                type="button" disabled={photoBusy} onClick={() => fileRef.current?.click()} title="تغيير الصورة" aria-label="تغيير الصورة"
+                type="button" onClick={() => fileRef.current?.click()} title="اختيار صورة" aria-label="اختيار صورة"
                 className="absolute -bottom-1 -end-1 grid h-10 w-10 place-items-center rounded-full bg-white text-brand-700 shadow-md ring-2 ring-brand-200 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-50 disabled:opacity-60"
               >
-                {photoBusy
-                  ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" />
-                  : <PencilIcon className="h-4 w-4" />}
+                <PencilIcon className="h-4 w-4" />
               </button>
               <input
                 ref={fileRef} type="file" hidden accept={ALLOWED.join(',')}
@@ -274,13 +267,12 @@ function EngineerProfile() {
 
       {/* ===== الفورم + الفريق والجلسة ===== */}
       <div className="grid gap-4 lg:grid-cols-12">
-        <Panel className="lg:col-span-7" delay={80} title="البيانات الشخصية" subtitle="التعديل بيتحفظ على السيرفر مباشرة">
+        <Panel className="lg:col-span-7" delay={80} title="البيانات الشخصية" subtitle="عدّلي بياناتك واختاري صورة شخصية">
           <form onSubmit={submit} onChange={() => setDirty(true)} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="label">الاسم</label>
-                <input className="input bg-neutral-50" value={eng?.name || ''} disabled readOnly />
-                <p className="mt-1 text-xs text-neutral-400">الاسم بيتعدل من إدارة الفرق</p>
+                <input name="name" className="input" defaultValue={eng?.name || session.name || ''} placeholder="الاسم بالكامل" />
               </div>
 
               <div>
@@ -345,7 +337,7 @@ function EngineerProfile() {
       </div>
 
       <p className={`text-center text-xs text-neutral-400 transition duration-700 ${ready ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}>
-        الصور المسموحة: PNG / JPG / WEBP · بتتقصّ وتتضغط تلقائياً قبل الحفظ
+        التعديلات والصورة للمعاينة داخل الواجهة فقط؛ الحفظ الدائم ومشاركة الصورة يحتاجان Backend. الصور المسموحة: PNG / JPG / WEBP
       </p>
     </div>
   );

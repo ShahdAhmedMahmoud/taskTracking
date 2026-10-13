@@ -6,6 +6,7 @@ import { useUI } from '../../hooks/useUI';
 import useCountUp from '../../hooks/useCountUp';
 import Avatar from '../ui/Avatar';
 import Panel from '../ui/Panel';
+import LocalProfileEditor from './LocalProfileEditor';
 import {
   CalendarIcon, ShieldIcon, UserIcon, KeyIcon, LockIcon, EyeIcon, EyeOffIcon, LogoutIcon, CheckIcon,
   TeamsIcon, ProjectsIcon, SettingsIcon, MailIcon, ArchiveIcon,
@@ -174,6 +175,14 @@ export default function DeptProfile() {
       <div className="grid gap-4 lg:grid-cols-12">
         {/* ===== الحساب ===== */}
         <div className="space-y-4 lg:col-span-7">
+          <LocalProfileEditor
+            name={name}
+            role="مدير القسم"
+            teamName="إدارة القسم"
+            teamOptions={['إدارة القسم', ...main.map(teamLabel)]}
+            roleOptions={['نائب مدير القسم', 'مشرف القسم']}
+            accessOptions={['مشاهدة فقط', 'إدارة الفرق', 'صلاحيات كاملة']}
+          />
           <Panel delay={60} title="الحساب" subtitle="بيانات حسابك الحالية">
             <dl className="space-y-1">
               {rows.map(([Icon, label, value]) => (
@@ -187,7 +196,7 @@ export default function DeptProfile() {
               ))}
             </dl>
             <p className="mt-4 flex items-center gap-2 rounded-xl bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-500">
-              <LockIcon className="h-4 w-4 shrink-0" />بيانات الحساب للعرض فقط.
+              <LockIcon className="h-4 w-4 shrink-0" />تعديل الصلاحيات ومستوى الوصول متاح لمدير النظام.
             </p>
           </Panel>
 

@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import TeamsPage from './pages/TeamsPage';
 import TeamPage from './pages/TeamPage';
+import TeamHomePage from './pages/TeamHomePage';
 import EngineersPage from './pages/EngineersPage';
 import ProjectsPage from './pages/ProjectsPage';
 import EngineerPage from './pages/EngineerPage';
@@ -72,7 +73,7 @@ export default function App() {
         <Route path="/" element={only(['dept'], <HomePage />)} />
         <Route path="/teams" element={only(['dept'], <TeamsPage />)} />
         <Route path="/teams/:teamId" element={only(['dept'], <TeamPage />)} />
-        <Route path="/team" element={only(['team'], <TeamPage />)} />
+        <Route path="/team" element={only(['team'], <TeamHomePage />)} />
         <Route path="/engineers" element={only(['dept'], <EngineersPage />)} />
         <Route path="/engineers/:engId" element={only(['dept', 'team'], <EngineerPage />)} />
         <Route path="/my-tasks" element={only(['engineer'], <EngineerPage />)} />
