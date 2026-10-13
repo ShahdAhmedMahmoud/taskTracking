@@ -1,6 +1,16 @@
 export const fmtDate = (d, opts = { day: 'numeric', month: 'short', year: 'numeric' }) =>
   d ? new Date(d).toLocaleDateString('ar-EG', opts) : '—';
 
+/** Timestamps returned by older API rows can omit the UTC suffix; treat those as UTC. */
+export function parseTimestamp(value) {
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === 'number') return value;
+  const raw = String(value || '').trim();
+  if (!raw) return NaN;
+  const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw);
+  return Date.parse(hasZone ? raw : `${raw}Z`);
+}
+
 export function daysLeft(dateStr) {
   if (!dateStr) return { text: 'بدون موعد', tone: 'slate' };
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -14,7 +24,9 @@ export function daysLeft(dateStr) {
 
 export function timeAgo(iso) {
   if (!iso) return 'لم يُحفظ بعد';
-  const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  const timestamp = parseTimestamp(iso);
+  if (!Number.isFinite(timestamp)) return 'وقت غير معروف';
+  const mins = Math.floor((Date.now() - timestamp) / 60000);
   if (mins < 1) return 'الآن';
   if (mins < 60) return `منذ ${mins} دقيقة`;
   const hrs = Math.floor(mins / 60);

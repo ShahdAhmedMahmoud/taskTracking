@@ -1,14 +1,10 @@
-import { request, store, wait, USE_MOCK } from './request';
+import { request, USE_MOCK } from './request';
 
 /**
  * عقد الـ API الكامل في BACKEND-SPEC.md قسم 1.
- * في وضع الـ mock:
- *  - القايمة بتتقرا من GET /api/dashboard/archives الحقيقي (الموجود دلوقتي)، ولو فاضية بتظهر بيانات تجريبية.
- *  - الاسترجاع والحذف النهائي بيتخزنوا محليًا في المتصفح بس (بيخفوا السجل) ومش بيغيّروا الـ database.
+ * بيانات العرض التجريبية لا تنفذ تغييرات حقيقية. عمليات الاسترجاع والحذف ترسل طلبًا للخادم،
+ * ولا تعتبر ناجحة إلا بعد تأكيد الخادم حفظ التغيير.
  */
-const GONE_KEY = 'mock-archive-gone';
-const gone = () => store.get(GONE_KEY, []);
-const markGone = (id) => store.set(GONE_KEY, [...new Set([...gone(), id])]);
 
 const demoSnapshot = (name, taskIds, ratio, { finished = false, outcome = null } = {}) => ({
   id: `demo_${name}`,
@@ -38,8 +34,6 @@ export const archivesService = {
     }
     if (USE_MOCK) {
       if (!rows.length) rows = demoRows(taskIds);
-      const hidden = gone();
-      rows = rows.filter((r) => !hidden.includes(r.id));
     }
     return rows;
   },
@@ -52,13 +46,11 @@ export const archivesService = {
 
   /** استرجاع كمشروع جاري. ممكن يرمي error.code === 'ENGINEER_NOT_FOUND' (409) فنطلب مهندس بديل. */
   async restore(id, { targetEngineerId } = {}) {
-    if (USE_MOCK) { await wait(450); markGone(id); return { restored: true }; }
     return request(`/api/dashboard/archives/${encodeURIComponent(id)}/restore`, { method: 'POST', body: targetEngineerId ? { targetEngineerId } : {} });
   },
 
   /** حذف نهائي — مفيش رجوع. */
   async remove(id) {
-    if (USE_MOCK) { await wait(450); markGone(id); return null; }
     return request(`/api/dashboard/archives/${encodeURIComponent(id)}`, { method: 'DELETE' });
   },
 };

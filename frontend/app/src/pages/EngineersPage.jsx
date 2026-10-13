@@ -23,6 +23,7 @@ function metricsOf(data) {
   const counts = { running: running.length, pending: 0, won: 0, lost: 0 };
   projects.forEach((p) => { if (p.finished) counts[stateOf(p)] += 1; });
   const decided = counts.won + counts.lost;
+  const delivered = counts.pending + decided;
 
   let td = 0; let tt = 0;
   projects.forEach((p) => { const r = projectProgress(p); td += r.done; tt += r.total; });
@@ -37,8 +38,8 @@ function metricsOf(data) {
 
   return {
     counts,
-    delivered: counts.pending + decided,
-    winPct: decided ? Math.round((counts.won / decided) * 100) : null,
+    delivered,
+    winPct: delivered ? Math.round((counts.won / delivered) * 100) : null,
     td, tt, completedHours,
     pct: tt ? Math.round((td / tt) * 100) : 0,
     next: dated[0] || null,

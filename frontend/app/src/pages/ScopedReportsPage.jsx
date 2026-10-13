@@ -11,6 +11,7 @@ import { collectProjects, n } from '../utils/dashboardData';
 import { teamLabel } from '../utils/helpers';
 import { projectStats } from '../utils/stats';
 import { projectCounts } from '../utils/reportsData';
+import PercentProgress from '../components/ui/PercentProgress';
 
 const fmtDate = (value) => value ? new Date(`${value.slice(0, 10)}T00:00:00`).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' }) : 'غير محدد';
 
@@ -96,7 +97,7 @@ export default function ScopedReportsPage() {
       <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon="▣" label="إجمالي المشاريع" value={totals.projects} hint={`${n(totals.running)} جاري · ${n(totals.delivered)} تم تسليمه`} featured />
         <StatCard icon="✓" label="إنجاز المهام" value={`${n(totals.done)} / ${n(totals.total)}`} hint={`${n(taskPct)}% من إجمالي المهام`} />
-        <StatCard icon="↗" label="نسبة الفوز" value={`${n(counts.winPct || 0)}%`} hint={`${n(counts.won)} فوز من ${n(counts.decided)} نتيجة محسومة`} />
+        <StatCard icon="↗" label="نسبة الفوز" value={`${n(counts.winPct || 0)}%`} hint={`${n(counts.won)} فوز من ${n(counts.delivered)} مشروع تم تسليمه`} />
       </div>
 
       <div className="mb-5 grid gap-5 xl:grid-cols-2">
@@ -114,7 +115,7 @@ export default function ScopedReportsPage() {
       </div>
 
       {!isEngineer && <Panel className="mt-5" title="مقارنة أعضاء الفريق" subtitle="الإجمالي محسوب من المشاريع التي يملك الفريق صلاحية الوصول إليها">
-        {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[34rem] text-sm"><thead><tr className="border-b border-neutral-100 text-xs text-neutral-400"><th className="py-3 text-start">المهندس</th><th className="text-center">المشاريع</th><th className="text-center">الجارية</th><th className="text-center">المهام المنجزة / الإجمالي</th><th className="text-center">الإنجاز</th></tr></thead><tbody className="divide-y divide-neutral-100">{rows.map((row) => <tr key={row.engineer.id} className="hover:bg-brand-50/40"><td className="py-3"><div className="flex items-center gap-2.5"><Avatar engineer={row.engineer} size={32} /><span className="font-bold">{row.engineer.name}</span></div></td><td className="text-center">{n(row.projects)}</td><td className="text-center">{n(row.running)}</td><td className="text-center font-bold">{n(row.done)} / {n(row.total)}</td><td className="text-center"><span className="rounded-full bg-brand-50 px-2.5 py-1 font-extrabold text-brand-700">{n(row.pct)}%</span></td></tr>)}</tbody></table></div> : <p className="py-8 text-center text-sm text-neutral-400">لا يوجد أعضاء في الفريق حتى الآن.</p>}
+        {rows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[34rem] text-sm"><thead><tr className="border-b border-neutral-100 text-xs text-neutral-400"><th className="py-3 text-start">المهندس</th><th className="text-center">المشاريع</th><th className="text-center">الجارية</th><th className="text-center">المهام المنجزة / الإجمالي</th><th className="text-center">الإنجاز</th></tr></thead><tbody className="divide-y divide-neutral-100">{rows.map((row) => <tr key={row.engineer.id} className="hover:bg-brand-50/40"><td className="py-3"><div className="flex items-center gap-2.5"><Avatar engineer={row.engineer} size={32} /><span className="font-bold">{row.engineer.name}</span></div></td><td className="text-center">{n(row.projects)}</td><td className="text-center">{n(row.running)}</td><td className="text-center font-bold">{n(row.done)} / {n(row.total)}</td><td className="px-2"><PercentProgress value={row.pct} compact /></td></tr>)}</tbody></table></div> : <p className="py-8 text-center text-sm text-neutral-400">لا يوجد أعضاء في الفريق حتى الآن.</p>}
       </Panel>}
 
       <Panel className="mt-5" title={isEngineer ? 'مشاريعي' : 'مشاريع الفريق'} subtitle={`${n(items.length)} مشروع ضمن نطاق التقرير`}>

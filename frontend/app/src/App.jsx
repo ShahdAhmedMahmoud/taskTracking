@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useData } from './hooks/useData';
 import { useAuth } from './hooks/useAuth';
 import { DeptActivityProvider } from './hooks/useDeptActivity';
+import { TeamActivityProvider } from './hooks/useTeamActivity';
 import { RequireAuth, RequireRole } from './layouts/RequireAuth';
 import AppLayout from './layouts/AppLayout';
 import Loader from './components/ui/Loader';
@@ -10,7 +11,7 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import TeamsPage from './pages/TeamsPage';
 import TeamPage from './pages/TeamPage';
-import TeamHomePage from './pages/TeamHomePage';
+import TeamManagerDashboard from './components/teams/TeamManagerDashboard';
 import EngineersPage from './pages/EngineersPage';
 import ProjectsPage from './pages/ProjectsPage';
 import EngineerPage from './pages/EngineerPage';
@@ -25,6 +26,8 @@ import EmailSettingsPage from './pages/EmailSettingsPage';
 import ArchivesPage from './pages/ArchivesPage';
 import ActivityPage from './pages/ActivityPage';
 import DeptNotificationsPage from './pages/DeptNotificationsPage';
+import TeamNotificationsPage from './pages/TeamNotificationsPage';
+import TeamPerformancePage from './pages/TeamPerformancePage';
 import { homeFor } from './utils/helpers';
 
 const only = (roles, el) => <RequireRole roles={roles}>{el}</RequireRole>;
@@ -35,6 +38,7 @@ function NotificationsRoute() {
   const { teams } = useData();
   if (session.role === 'dept') return <DeptNotificationsPage />;
   if (session.role === 'engineer') return <NotificationsPage />;
+  if (session.role === 'team' && teams.find((team) => team.id === session.id)?.type !== 'hasr') return <TeamNotificationsPage />;
   return <Navigate to={homeFor(session, teams)} replace />;
 }
 
@@ -69,11 +73,12 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route element={<RequireAuth><DeptActivityProvider><AppLayout /></DeptActivityProvider></RequireAuth>}>
+      <Route element={<RequireAuth><TeamActivityProvider><DeptActivityProvider><AppLayout /></DeptActivityProvider></TeamActivityProvider></RequireAuth>}>
         <Route path="/" element={only(['dept'], <HomePage />)} />
         <Route path="/teams" element={only(['dept'], <TeamsPage />)} />
         <Route path="/teams/:teamId" element={only(['dept'], <TeamPage />)} />
-        <Route path="/team" element={only(['team'], <TeamHomePage />)} />
+        <Route path="/team" element={only(['team'], <TeamManagerDashboard />)} />
+        <Route path="/team/performance" element={only(['team'], <TeamPerformancePage />)} />
         <Route path="/engineers" element={only(['dept'], <EngineersPage />)} />
         <Route path="/engineers/:engId" element={only(['dept', 'team'], <EngineerPage />)} />
         <Route path="/my-tasks" element={only(['engineer'], <EngineerPage />)} />

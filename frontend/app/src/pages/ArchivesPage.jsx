@@ -75,8 +75,8 @@
 
 // // //   const kpis = [
 // // //     ['إجمالي المؤرشف', items.length, 'text-brand-700'],
-// // //     ['الشهر ده', thisMonth, 'text-sky-600'],
-// // //     ['مهندسين متأثرين', engineers.length, 'text-slate-700'],
+// // //     ['أُضيفت هذا الشهر', thisMonth, 'text-sky-600'],
+// // //     ['المهندسون متأثرين', engineers.length, 'text-slate-700'],
 // // //   ];
 
 // // //   return (
@@ -106,7 +106,7 @@
 // // //             className="w-full rounded-xl bg-slate-50 py-2.5 pe-4 ps-11 text-sm font-semibold outline-none ring-1 ring-slate-200 transition placeholder:text-slate-300 focus:bg-white focus:ring-2 focus:ring-brand-400" />
 // // //         </label>
 // // //         {[
-// // //           ['المهندس', eng, setEng, [['all', 'كل المهندسين'], ...engineers]],
+// // //           ['المهندس', eng, setEng, [['all', 'كل الالمهندسون'], ...engineers]],
 // // //           ['ترتيب', order, setOrder, [['new', 'الأحدث أولًا'], ['old', 'الأقدم أولًا']]],
 // // //         ].map(([label, value, set, opts]) => (
 // // //           <label key={label} className="flex items-center gap-2 text-sm font-bold text-slate-400">
@@ -134,8 +134,8 @@
 // // //         ) : items.length === 0 ? (
 // // //           <div className="card flex flex-col items-center gap-3 py-16 text-center animate-rise">
 // // //             <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-600"><ArchiveIcon className="h-7 w-7" /></span>
-// // //             <p className="font-extrabold">الأرشيف فاضي</p>
-// // //             <p className="max-w-sm text-sm leading-relaxed text-slate-400">أي مشروع بيتحذف من صفحة المهندس بيتنقل هنا تلقائيًا.</p>
+// // //             <p className="font-extrabold">لا توجد مشاريع مؤرشفة</p>
+// // //             <p className="max-w-sm text-sm leading-relaxed text-slate-400">ستظهر هنا المشاريع التي تم نقلها إلى الأرشيف.</p>
 // // //           </div>
 // // //         ) : list.length === 0 ? (
 // // //           <div className="card py-12 text-center text-sm text-slate-400 animate-rise">مفيش نتايج مطابقة للبحث.</div>
@@ -431,7 +431,7 @@
 
 // //       {rows === null && <Loader />}
 // //       {error && <Empty icon="⚠️" title="تعذر تحميل الأرشيف" text={error} />}
-// //       {rows && !error && !shown.length && <Empty icon="🗄️" title={rows.length ? 'مفيش نتائج مطابقة' : 'الأرشيف فاضي'} text={rows.length ? 'غيّري البحث أو الفلتر.' : 'المشاريع اللي بتتأرشف هتظهر هنا.'} />}
+// //       {rows && !error && !shown.length && <Empty icon="🗄️" title={rows.length ? 'مفيش نتائج مطابقة' : 'لا توجد مشاريع مؤرشفة'} text={rows.length ? 'غيّري البحث أو الفلتر.' : 'المشاريع اللي بتتأرشف هتظهر هنا.'} />}
 
 // //       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
 // //         {shown.map((row, i) => {
@@ -833,7 +833,7 @@
 //       {/* ===== المحتوى ===== */}
 //       {rows === null && <Loader />}
 //       {error && <Empty icon="⚠️" title="تعذر تحميل الأرشيف" text={error} />}
-//       {rows && !error && !shown.length && <Empty icon="🗄️" title={rows.length ? 'مفيش نتائج مطابقة' : 'الأرشيف فاضي'} text={rows.length ? 'غيّري البحث أو الفلتر.' : 'المشاريع اللي بتتأرشف هتظهر هنا.'} />}
+//       {rows && !error && !shown.length && <Empty icon="🗄️" title={rows.length ? 'مفيش نتائج مطابقة' : 'لا توجد مشاريع مؤرشفة'} text={rows.length ? 'غيّري البحث أو الفلتر.' : 'المشاريع اللي بتتأرشف هتظهر هنا.'} />}
 
 //       <div className="space-y-8">
 //         {groups.map((g) => (
@@ -879,9 +879,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../hooks/useData';
 import { useUI } from '../hooks/useUI';
-import { useAuth } from '../hooks/useAuth';
 import { useRefreshOnLeave } from '../hooks/useRefreshOnLeave';
-import { getArchives } from '../services/adminService';
+import { archivesService } from '../services/archivesService';
 import PageHeader from '../components/ui/PageHeader';
 import Avatar from '../components/ui/Avatar';
 import ProgressRing from '../components/ui/ProgressRing';
@@ -899,9 +898,8 @@ const TrashIcon = (p) => <Svg {...p}><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6
 const CloseIcon = (p) => <Svg {...p}><path d="M18 6 6 18M6 6l12 12" /></Svg>;
 
 /* ================= أدوات ================= */
-const TABS = [['overview', 'نظرة عامة'], ['tasks', 'المهام'], ['rounds', 'الجولات والملاحظات'], ['raw', 'بيانات خام']];
+const TABS = [['overview', 'نظرة عامة'], ['tasks', 'المهام'], ['rounds', 'الجولات والملاحظات']];
 const GROUPS = [['month', 'الشهر'], ['team', 'الفريق'], ['eng', 'المهندس']];
-const HID_KEY = 'tender-archive-hidden:v1';
 const SNAP_KEYS = ['snapshot', 'snapshotJson', 'projectSnapshot', 'projectJson', 'projectData', 'data', 'payload'];
 
 const monthKey = (d) => (d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : 'none');
@@ -944,8 +942,7 @@ function Count({ value }) {
 
 /* ================= الصفحة ================= */
 export default function ArchivesPage() {
-  const { teams, tasks } = useData();
-  const { session } = useAuth();
+  const { teams, tasks, loadEngineer } = useData();
   const { confirm, toast } = useUI();
   const markChanged = useRefreshOnLeave();
 
@@ -957,24 +954,21 @@ export default function ArchivesPage() {
   const [group, setGroup] = useState('month');
   const [monthF, setMonthF] = useState('');
   const [removing, setRemoving] = useState(() => new Set());
-  const [restored, setRestored] = useState(() => new Set());
-  const [hidden, setHidden] = useState(() => { try { return new Set(JSON.parse(localStorage.getItem(HID_KEY)) || []); } catch { return new Set(); } });
-  const [showHidden, setShowHidden] = useState(false);
 
   const [sel, setSel] = useState(null);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState('overview');
   const [taskF, setTaskF] = useState('all');
-  const [live, setLive] = useState(null); // هل المشروع موجود بالفعل عند المهندس؟
+  const [live, setLive] = useState(null); // هل المشروع موجود بالفعل لدى المهندس؟
   const [busy, setBusy] = useState('');
 
   const load = () => {
     setError(''); setRows(null);
-    getArchives()
+    archivesService.list({ taskIds: tasks.map((task) => task.id) })
       .then((r) => { const list = Array.isArray(r) ? r : r?.items || []; setRows(list.map((x, i) => ({ ...x, _k: String(x.id ?? `${x.engineerId}-${x.projectId ?? i}`) }))); })
-      .catch((e) => setError(e.message));
+      .catch(() => setError('حدثت مشكلة أثناء تحميل الأرشيف. حاولي تحديث الصفحة.'));
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [tasks]);
 
   const engMap = useMemo(() => {
     const m = {};
@@ -995,7 +989,7 @@ export default function ArchivesPage() {
       at: r.archivedAt && !Number.isNaN(new Date(r.archivedAt).getTime()) ? new Date(r.archivedAt) : null,
       by: r.archivedBy || '',
     };
-  }).filter((x) => showHidden || !hidden.has(x.key)), [rows, engMap, hidden, showHidden]);
+  }), [rows, engMap]);
 
   const engineers = useMemo(() => {
     const m = new Map(); items.forEach((x) => m.set(x.engId, x.engName));
@@ -1048,7 +1042,7 @@ export default function ArchivesPage() {
   useEffect(() => {
     if (!sel?.snap?.id || !sel.known) return undefined;
     let dead = false;
-    getEngineerData(sel.engId).then((d) => { if (!dead) setLive(!!d.projects?.some((p) => p.id === sel.snap.id)); }).catch(() => { if (!dead) setLive(false); });
+    loadEngineer(sel.engId, true).then((d) => { if (!dead) setLive(!!d.projects?.some((p) => p.id === sel.snap.id)); }).catch(() => { if (!dead) setLive(false); });
     return () => { dead = true; };
   }, [sel]);
 
@@ -1060,55 +1054,33 @@ export default function ArchivesPage() {
     }, 480);
   };
 
-  /* إخفاء محلي (على المتصفح ده بس) لو الخادم مفيهوش حذف نهائي */
-  const persistHidden = (s2) => { try { localStorage.setItem(HID_KEY, JSON.stringify([...s2])); } catch { /* ignore */ } };
-  const hideRow = (key) => {
-    setRemoving((s2) => new Set(s2).add(key));
-    setTimeout(() => {
-      setHidden((h) => { const x = new Set(h).add(key); persistHidden(x); return x; });
-      setRemoving((s2) => { const x = new Set(s2); x.delete(key); return x; });
-    }, 480);
-  };
-  const unhide = (key) => setHidden((h) => { const x = new Set(h); x.delete(key); persistHidden(x); return x; });
-
   /* ---------- استرجاع كمشروع جاري (بالـ endpoints الموجودة) ---------- */
   const restore = async (it) => {
     if (!(await confirm({ title: '↩ استرجاع المشروع', message: `هيرجع «${it.name}» لـ ${it.engName} كمشروع جاري (غير مُسلَّم)، بكل مهامه وبياناته وقت الأرشفة.`, confirmText: 'استرجاع كمشروع جاري' }))) return;
     setBusy('restore');
     try {
       const snap = it.snap;
-      const data = await getEngineerData(it.engId);
-      if (data.projects?.some((p) => p.id === snap.id)) throw new Error('المشروع موجود بالفعل عند المهندس');
-      const project = { ...snap, finished: false, outcome: null, hasrSynced: false };
-      project.tasks = { ...snap.tasks };
-      tasks.forEach((t) => { if (!project.tasks[t.id]) project.tasks[t.id] = { status: false, review: false, applicable: !!t.applicable, dueDate: '', department: '', notes: '' }; });
-      data.projects = [...(data.projects || []), project];
-      data.lastSaved = new Date().toISOString();
-      await putEngineerData(it.engId, data);
-
-      let removed = true;
-      try { if (it.id != null) await deleteArchive(it.id, session?.name); else removed = false; } catch { removed = false; }
+      if (!snap?.id || it.id == null) throw new Error('بيانات المشروع غير مكتملة للاسترجاع.');
+      await archivesService.restore(it.id, { targetEngineerId: it.engId });
+      await loadEngineer(it.engId, true);
 
       markChanged();
       closeDrawer();
-      if (removed) vanish(it.key); else hideRow(it.key);
-      toast('success', `تم استرجاع «${it.name}» كمشروع جاري`);
-    } catch (e) { toast('error', `تعذّر الاسترجاع: ${e.message}`, 6000); } finally { setBusy(''); }
+      vanish(it.key);
+      toast('success', `تم استرجاع «${it.name}» كمشروع جارٍ`);
+    } catch (e) { toast('error', e.code === 'ENGINEER_NOT_FOUND' ? 'تعذّر العثور على المهندس الذي أرشف المشروع.' : 'تعذّر استرجاع المشروع. حاولي مرة أخرى.', 6000); } finally { setBusy(''); }
   };
 
   /* ---------- حذف نهائي ---------- */
   const hardDelete = async (it) => {
-    if (!(await confirm({ title: '🗑 حذف من الأرشيف', message: `هيتم حذف «${it.name}» من الأرشيف.\nلو الخادم مش بيدعم الحذف النهائي، هيتم إخفاؤه من القايمة على المتصفح ده بس (وتقدري ترجّعيه من «عرض المخفي»).`, confirmText: 'حذف / إخفاء' }))) return;
+    if (!(await confirm({ title: 'حذف المشروع نهائيًا', message: `سيتم حذف «${it.name}» نهائيًا من الأرشيف، ولا يمكن التراجع عن هذا الإجراء.`, confirmText: 'حذف نهائي' }))) return;
     setBusy('delete');
     try {
       if (it.id == null) throw Object.assign(new Error('no-id'), { status: 404 });
-      await deleteArchive(it.id, session?.name);
+      await archivesService.remove(it.id);
       closeDrawer(); vanish(it.key); toast('success', 'تم الحذف النهائي من الأرشيف');
     } catch (e) {
-      if (e.status === 404 || e.status === 405) {
-        closeDrawer(); hideRow(it.key);
-        toast('success', 'الخادم مفيهوش حذف نهائي، فاتخفى المشروع من القايمة على المتصفح ده فقط.', 6000);
-      } else toast('error', `تعذّر الحذف: ${e.message}`, 6000);
+      toast('error', 'تعذّر حذف المشروع نهائيًا. حاولي مرة أخرى.', 6000);
     } finally { setBusy(''); }
   };
 
@@ -1139,9 +1111,7 @@ export default function ArchivesPage() {
             <Avatar engineer={x.known?.e || { name: x.engName }} size={32} />
             <span className="min-w-0"><span className="block truncate text-sm font-bold">{x.engName}</span><span className="block truncate text-xs text-slate-400">{x.teamName}</span></span>
           </span>
-          {restored.has(x.key)
-            ? <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-700 ring-1 ring-emerald-200">تم الاسترجاع</span>
-            : st && <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${STATES[st].pill}`}>{STATES[st].label}</span>}
+          {st && <span className={`rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ${STATES[st].pill}`}>{STATES[st].label}</span>}
         </button>
       </li>
     );
@@ -1153,18 +1123,10 @@ export default function ArchivesPage() {
     const { snap } = sel;
     const noSnap = (
       <div className="rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/60 p-4 text-sm leading-relaxed text-amber-800">
-        الـ API مش بيرجّع لقطة المشروع كاملة، فمش هقدر أعرض المهام والتفاصيل ولا أسترجعه. راجعي تبويب «بيانات خام» عشان نشوف الحقول اللي بترجع بالظبط.
+        لا تتوفر تفاصيل كافية لهذا المشروع حاليًا.
       </div>
     );
 
-    if (tab === 'raw') {
-      return (
-        <div>
-          <button type="button" onClick={() => navigator.clipboard?.writeText(JSON.stringify(sel.raw, null, 2)).then(() => toast('success', 'تم النسخ'))} className="mb-3 rounded-lg px-3 py-1.5 text-xs font-bold text-brand-700 ring-1 ring-brand-200 transition hover:bg-brand-50">نسخ</button>
-          <pre dir="ltr" className="max-h-[60vh] overflow-auto rounded-2xl bg-slate-900 p-4 text-xs leading-relaxed text-slate-100">{JSON.stringify(sel.raw, null, 2)}</pre>
-        </div>
-      );
-    }
     if (!snap) return noSnap;
 
     if (tab === 'tasks') {
@@ -1184,7 +1146,7 @@ export default function ArchivesPage() {
             ))}
           </div>
           <ul className="space-y-2">
-            {shown.length === 0 && <li className="py-8 text-center text-sm text-slate-400">مفيش مهام في الفلتر ده.</li>}
+            {shown.length === 0 && <li className="py-8 text-center text-sm text-slate-400">لا توجد مهام تطابق هذا الاختيار.</li>}
             {shown.map((x, i) => (
               <li key={x.key} className="rounded-xl border border-slate-100 p-3 animate-rise" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}>
                 <div className="flex items-start gap-3">
@@ -1271,17 +1233,17 @@ export default function ArchivesPage() {
     );
   };
 
-  const why = !sel ? '' : !sel.snap ? 'مفيش لقطة للمشروع في الـ API' : !sel.known ? 'المهندس مش موجود حاليًا في الفرق' : restored.has(sel.key) || live ? 'المشروع موجود بالفعل عند المهندس' : '';
+  const why = !sel ? '' : !sel.snap ? 'لا تتوفر بيانات كافية لاسترجاع المشروع' : !sel.known ? 'المهندس غير موجود حاليًا ضمن الفرق' : live ? 'المشروع موجود بالفعل لدى المهندس' : '';
   const canRestore = sel && !why && live === false;
 
   return (
     <>
-      <PageHeader back title="الأرشيف" subtitle="استعرضي المشاريع المؤرشفة، وارجعيها كمشاريع جارية أو احذفيها نهائيًا" />
+      <PageHeader back title="الأرشيف" subtitle="راجعي المشاريع المؤرشفة، ثم أعيديها إلى العمل أو احذفيها نهائيًا." />
 
       {/* ===== مؤشرات + رسم الأرشفة ===== */}
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="grid grid-cols-3 gap-4 lg:col-span-5">
-          {[['إجمالي المؤرشف', items.length, 'text-brand-700'], ['الشهر ده', thisMonth, 'text-sky-600'], ['مهندسين', engineers.length, 'text-slate-700']].map(([l, v, c], i) => (
+          {[['إجمالي المؤرشف', items.length, 'text-brand-700'], ['أُضيفت هذا الشهر', thisMonth, 'text-sky-600'], ['المهندسون', engineers.length, 'text-slate-700']].map(([l, v, c], i) => (
             <div key={l} className="card p-4 animate-rise" style={{ animationDelay: `${i * 60}ms` }}>
               <p className={`text-3xl font-extrabold tabular-nums ${c}`}>{rows ? <Count value={v} /> : '—'}</p>
               <p className="mt-0.5 text-sm font-semibold text-slate-400">{l}</p>
@@ -1321,7 +1283,7 @@ export default function ArchivesPage() {
             ))}
           </div>
         </div>
-        {[['المهندس', eng, setEng, [['all', 'كل المهندسين'], ...engineers]], ['ترتيب', order, setOrder, [['new', 'الأحدث'], ['old', 'الأقدم']]]].map(([label, value, set, opts]) => (
+        {[['المهندس', eng, setEng, [['all', 'كل الالمهندسون'], ...engineers]], ['ترتيب', order, setOrder, [['new', 'الأحدث'], ['old', 'الأقدم']]]].map(([label, value, set, opts]) => (
           <label key={label} className="flex items-center gap-2 text-sm font-bold text-slate-400">
             {label}
             <select value={value} onChange={(e) => set(e.target.value)} className="max-w-[11rem] rounded-xl bg-white px-3 py-2.5 text-sm font-semibold text-slate-600 outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400">
@@ -1329,7 +1291,6 @@ export default function ArchivesPage() {
             </select>
           </label>
         ))}
-        {hidden.size > 0 && <button type="button" onClick={() => setShowHidden((v) => !v)} className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-500 ring-1 ring-slate-200 transition hover:bg-slate-50">{showHidden ? 'إخفاء المخفي' : `عرض المخفي (${n(hidden.size)})`}</button>}
         {dirty && <button type="button" onClick={() => { setQ(''); setEng('all'); setMonthF(''); }} className="rounded-xl px-3 py-2.5 text-sm font-bold text-brand-700 transition hover:bg-brand-50">مسح الفلاتر</button>}
       </div>
 
@@ -1345,10 +1306,10 @@ export default function ArchivesPage() {
         ) : items.length === 0 ? (
           <div className="card flex flex-col items-center gap-3 py-16 text-center animate-rise">
             <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-600"><ArchiveIcon className="h-7 w-7" /></span>
-            <p className="font-extrabold">الأرشيف فاضي</p><p className="max-w-sm text-sm text-slate-400">أي مشروع بيتحذف من صفحة المهندس بيتنقل هنا تلقائيًا.</p>
+            <p className="font-extrabold">لا توجد مشاريع مؤرشفة</p><p className="max-w-sm text-sm text-slate-400">ستظهر هنا المشاريع التي تم نقلها إلى الأرشيف.</p>
           </div>
         ) : list.length === 0 ? (
-          <div className="card py-12 text-center text-sm text-slate-400 animate-rise">مفيش نتايج مطابقة.</div>
+          <div className="card py-12 text-center text-sm text-slate-400 animate-rise">لا توجد نتائج مطابقة.</div>
         ) : (
           <div key={group} className="space-y-7">
             {groups.map((g) => (
@@ -1397,8 +1358,8 @@ export default function ArchivesPage() {
                 <button type="button" onClick={() => restore(sel)} disabled={!canRestore || !!busy} className="btn-primary inline-flex flex-1 items-center justify-center gap-2 disabled:opacity-50">
                   <RestoreIcon className="h-4 w-4" />{busy === 'restore' ? 'جاري الاسترجاع…' : live === null && sel.snap && sel.known ? 'جاري الفحص…' : 'استرجاع كمشروع جاري'}
                 </button>
-                <button type="button" onClick={() => (hidden.has(sel.key) ? unhide(sel.key) : hardDelete(sel))} disabled={!!busy} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-rose-600 ring-1 ring-rose-200 transition hover:bg-rose-50 disabled:opacity-50">
-                  <TrashIcon className="h-4 w-4" />{hidden.has(sel.key) ? 'إلغاء الإخفاء' : busy === 'delete' ? 'جاري الحذف…' : 'حذف من الأرشيف'}
+                <button type="button" onClick={() => hardDelete(sel)} disabled={!!busy} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-rose-600 ring-1 ring-rose-200 transition hover:bg-rose-50 disabled:opacity-50">
+                  <TrashIcon className="h-4 w-4" />{busy === 'delete' ? 'جاري الحذف…' : 'حذف نهائي'}
                 </button>
               </div>
             </footer>

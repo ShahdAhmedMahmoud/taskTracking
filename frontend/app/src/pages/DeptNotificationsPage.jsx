@@ -49,7 +49,7 @@ function EventCard({ ev, engineer, i, fresh }) {
   const Icon = ICON[ev.kind] || BellIcon;
   const items = ev.items || [];
   const shown = open ? items : items.slice(0, 3);
-  const to = ev.actorId ? `/engineers/${ev.actorId}?p=${ev.projectId}` : `/hasr/${ev.teamId}`;
+  const to = ev.actorId ? `/engineers/${ev.actorId}` : `/hasr/${ev.teamId}`;
 
   return (
     <li
@@ -87,7 +87,7 @@ function EventCard({ ev, engineer, i, fresh }) {
           )}
         </div>
 
-        <Link to={to} aria-label="فتح" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-neutral-400 ring-1 ring-neutral-200 transition duration-300 hover:bg-brand-600 hover:text-white hover:ring-brand-600">
+        <Link to={to} onClick={() => { if (ev.actorId && ev.projectId) localStorage.setItem(`tender-dashboard-active-project:${ev.actorId}`, ev.projectId); }} aria-label="فتح" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-neutral-400 ring-1 ring-neutral-200 transition duration-300 hover:bg-brand-600 hover:text-white hover:ring-brand-600">
           <ArrowIcon className="h-4 w-4" />
         </Link>
       </div>

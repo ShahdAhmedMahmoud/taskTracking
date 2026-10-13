@@ -30,7 +30,7 @@ const ACTIONS = [
   ['/reports', ReportsIcon, 'التقارير', 'رسوم وجداول أداء القسم والفرق والمهندسين'],
   ['/add-employee', UserPlusIcon, 'إضافة موظف', 'إضافة موظف جديد لفريق محدد'],
   // ['/master-data', SettingsIcon, 'الماستر داتا', 'إدارة الحقول الديناميكية لكل الأقسام'],
-  ['/email-settings', MailIcon, 'إعدادات البريد', 'SMTP والمستلمين عند إنشاء مشروع'],
+  // ['/email-settings', MailIcon, 'إعدادات البريد', 'SMTP والمستلمين عند إنشاء مشروع'],
   ['/archives', ArchiveIcon, 'الأرشيف', 'المشاريع المؤرشفة والمحذوفة'],
 ];
 
@@ -140,7 +140,7 @@ export default function HomePage() {
               <p className="mt-2 max-w-xl text-base leading-relaxed text-[#3C3C3B]">
                 عندك {n(counts.running)} مشروع جاري
                 {counts.pending > 0 && `، و${n(counts.pending)} معلق بانتظار القرار`}
-                {counts.total > 0 && `، ونسبة الفوز ${counts.decided ? `${n(counts.winPct)}%` : 'لسه ما اتحددتش'}`}.
+                {counts.total > 0 && `، ونسبة الفوز ${counts.delivered ? `${n(counts.winPct)}%` : 'لا توجد مشاريع مُسلّمة بعد'}`}.
               </p>
               <p className="mt-3 inline-block rounded-full bg-white px-3.5 py-1.5 text-sm font-bold text-brand-700 ring-1 ring-brand-200/80 shadow-xs">
                 {n(main.length)} فرق · {n(engineersCount)} مهندس
@@ -167,7 +167,7 @@ export default function HomePage() {
         <StatCard featured delay={0} to="/projects" icon={<ProjectsIcon />} label="إجمالي المشاريع" value={counts.total} hint={`${n(counts.delivered)} تم تسليمه`} />
         <StatCard delay={70} to="/projects" icon={<ClockIcon />} label="مشاريع جارية" value={counts.running} tone="sky" hint={counts.running ? `متوسط الإنجاز ${n(avgProgress)}%` : 'لا توجد مشاريع جارية'} />
         <StatCard delay={140} icon={<CheckIcon />} label="تم تسليمها" value={counts.delivered} tone="brand" hint={`${n(counts.won)} فوز · ${n(counts.lost)} خسارة · ${n(counts.pending)} معلق`} />
-        <StatCard delay={210} icon={<TrophyIcon />} label="نسبة الفوز" value={counts.winPct} suffix="%" tone="amber" hint={counts.decided ? `من ${n(counts.decided)} نتيجة نهائية` : 'لا نتائج نهائية بعد'} />
+        <StatCard delay={210} icon={<TrophyIcon />} label="نسبة الفوز" value={counts.winPct} suffix="%" tone="amber" hint={counts.delivered ? `من ${n(counts.delivered)} مشروع تم تسليمه` : 'لا توجد مشاريع مُسلّمة بعد'} />
       </div>
 
       {/* ===== حالة المشاريع ===== */}
@@ -195,7 +195,7 @@ export default function HomePage() {
             segments={['won', 'pending', 'lost'].map((k) => ({ label: STATES[k].label, color: STATES[k].color, value: pr[k] }))}
           />
           <p className="mt-4 text-center text-sm font-semibold text-neutral-400">
-            نسبة الفوز في الفترة: <b className="text-brand-700">{pr.decided ? `${n(pr.winPct)}%` : '—'}</b>
+            نسبة الفوز في الفترة: <b className="text-brand-700">{pr.delivered ? `${n(pr.winPct)}%` : '—'}</b>
           </p>
         </Panel>
       </div>

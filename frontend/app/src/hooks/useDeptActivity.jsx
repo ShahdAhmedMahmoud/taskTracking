@@ -65,9 +65,18 @@ export function DeptActivityProvider({ children }) {
       if (isDirty) touched.current.add(e.id); else touched.current.delete(e.id);
 
       if (!silent) {
-        const parsed = Date.parse(d.lastSaved);
-        const at = Number.isFinite(parsed) && parsed <= now + 60000 ? parsed : now;
-        diffEngineer(prev, next, ctx).forEach((ev, i) => fresh.push({
+        const at = now;
+        let changes = [];
+        try { changes = diffEngineer(prev, next, ctx); } catch { /* اللقطة القديمة/التالفة لمهندس واحد لا توقف بقية الفريق */ }
+        // Keep project delivery visible even if a legacy snapshot is incomplete.
+        Object.entries(next).forEach(([projectId, current]) => {
+          const previous = prev?.[projectId];
+          if (previous && Number(previous.f) !== 1 && Number(current.f) === 1
+            && !changes.some((event) => event.projectId === projectId && event.kind === 'delivered')) {
+            changes.push({ kind: 'delivered', projectId, project: current.n || 'مشروع بدون اسم', title: 'سلّم المشروع' });
+          }
+        });
+        changes.forEach((ev, i) => fresh.push({
           ...ev, id: `${e.id}:${ev.projectId}:${ev.kind}:${now}:${i}`, group: GROUP[ev.kind],
           actorId: e.id, actorName: e.name, teamId: t.id, teamName: teamLabel(t), at, detectedAt: now,
         }));

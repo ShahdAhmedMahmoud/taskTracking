@@ -258,7 +258,25 @@ export default function ManageTeamsPage() {
 
   return (
     <>
-      <PageHeader back title="إدارة الفرق" subtitle="الفرق والمدراء والمهندسين: نقل وتعيين وحذف وإعادة تعيين كلمات المرور" />
+      <PageHeader back title="إدارة الفرق" subtitle="نظّمي الفرق، وأديري تعيين المديرين ونقل المهندسين من مساحة واحدة." />
+
+      <section className="relative mb-5 overflow-hidden rounded-3xl border border-brand-100 bg-gradient-to-br from-white via-brand-50/70 to-brand-100/60 p-5 shadow-soft animate-rise sm:p-7">
+        <span aria-hidden className="pointer-events-none absolute -end-12 -top-16 h-52 w-52 rounded-full bg-brand-200/40 blur-3xl" />
+        <div className="relative flex flex-wrap items-center justify-between gap-5">
+          <div className="min-w-0 flex-1 basis-64">
+            <span className="inline-flex rounded-full bg-white/80 px-3 py-1 text-xs font-extrabold text-brand-700 ring-1 ring-brand-100">إدارة الهيكل التنظيمي</span>
+            <h2 className="mt-3 text-2xl font-black text-brand-950 sm:text-3xl">فرق واضحة، ومسؤوليات محددة</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">تابعي تشكيل كل فريق ومديره، وانقلي المهندسين أو عيّني مديرًا جديدًا بخطوات مباشرة.</p>
+          </div>
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+            <div className="rounded-2xl bg-white/85 px-4 py-3 ring-1 ring-brand-100"><p className="text-xl font-black tabular-nums text-brand-900">{n(teams.length)}</p><p className="text-xs font-bold text-neutral-500">فريق</p></div>
+            <div className="rounded-2xl bg-white/85 px-4 py-3 ring-1 ring-brand-100"><p className="text-xl font-black tabular-nums text-brand-900">{n(totalEngs)}</p><p className="text-xs font-bold text-neutral-500">مهندس</p></div>
+            <button type="button" className="btn-primary inline-flex items-center gap-1.5 transition duration-200 hover:-translate-y-0.5" onClick={() => setModal({ kind: 'team' })}>
+              <PlusIcon className="h-4 w-4" />إنشاء فريق
+            </button>
+          </div>
+        </div>
+      </section>
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <label className="relative min-w-0 flex-1 basis-60">
@@ -267,16 +285,12 @@ export default function ManageTeamsPage() {
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحثي عن مهندس في كل الفرق"
             className="w-full rounded-xl bg-white py-2.5 pe-4 ps-11 text-sm font-semibold outline-none ring-1 ring-slate-200 transition placeholder:text-slate-300 focus:ring-2 focus:ring-brand-400" />
         </label>
-        <span className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-500 ring-1 ring-slate-200">{n(teams.length)} فريق · {n(totalEngs)} مهندس</span>
-        <button type="button" className="btn-primary inline-flex items-center gap-1.5" onClick={() => setModal({ kind: 'team' })}>
-          <PlusIcon className="h-4 w-4" />فريق جديد
-        </button>
       </div>
 
       {visible.length === 0 ? (
         <div className="card flex flex-col items-center gap-3 py-14 text-center animate-rise">
-          <p className="font-bold">{teams.length ? 'مفيش مهندس بالاسم ده' : 'لا توجد فرق بعد'}</p>
-          <p className="text-sm text-slate-400">{teams.length ? 'جرّبي كلمة تانية.' : 'ابدئي بإنشاء أول فريق.'}</p>
+          <p className="font-bold">{teams.length ? 'لا يوجد مهندس بهذا الاسم' : 'لا توجد فرق بعد'}</p>
+          <p className="text-sm text-slate-400">{teams.length ? 'جرّبي البحث باسم آخر.' : 'ابدئي بإنشاء الفريق الأول.'}</p>
         </div>
       ) : (
         <div className="grid gap-5 xl:grid-cols-2">

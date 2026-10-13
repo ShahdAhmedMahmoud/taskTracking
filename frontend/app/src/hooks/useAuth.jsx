@@ -31,6 +31,12 @@ export function AuthProvider({ children }) {
   };
   const persist = async (next) => { setAuth(next); await saveAuth(next); };
 
+  useEffect(() => {
+    if (!session) return;
+    const name = nameFor(session.role, session.id);
+    if (name && name !== session.name) setSession((current) => current ? { ...current, name } : current);
+  }, [teams, deptManager, session?.role, session?.id, session?.name]);
+
   const enter = useCallback(async (role, id) => {
     await loadScoped({ role, id });
     setSession({ role, id, name: nameFor(role, id) });

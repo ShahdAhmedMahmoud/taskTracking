@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useData } from '../../hooks/useData';
 import { initAlerts, processEngineerData } from '../../services/engineerAlerts';
+import { fetchHasr } from '../../services/hasrService';
 
 /**
  * بيتحط مرة واحدة في AppLayout (للمهندس بس).
@@ -9,9 +10,11 @@ import { initAlerts, processEngineerData } from '../../services/engineerAlerts';
  */
 export default function EngineerAlertsWatcher() {
   const { session } = useAuth();
-  const { tasks } = useData();
+  const { tasks, teams } = useData();
   const tk = useRef(tasks);
+  const roster = useRef(teams);
   tk.current = tasks;
+  roster.current = teams;
 
   useEffect(() => {
     if (session?.role !== 'engineer') return undefined;
@@ -21,7 +24,11 @@ export default function EngineerAlertsWatcher() {
       try {
         const res = await fetch(`/api/dashboard/engineers/${encodeURIComponent(session.id)}`, { cache: 'no-store' });
         if (!res.ok || dead) return;
-        processEngineerData(await res.json(), tk.current);
+        const data = await res.json();
+        const team = roster.current.find((item) => item.engineers?.some((engineer) => engineer.id === session.id));
+        const hasrTeam = roster.current.find((item) => item.type === 'hasr');
+        const hasr = team && hasrTeam ? await fetchHasr(hasrTeam.id) : [];
+        if (!dead) processEngineerData(data, tk.current, hasr);
       } catch { /* هنحاول تاني بعد شوية */ }
     };
     run();

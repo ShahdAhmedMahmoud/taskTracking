@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useData } from '../hooks/useData';
 import { useNotifications } from '../hooks/useNotifications';
 import { useDeptActivity } from '../hooks/useDeptActivity';
+import { useTeamActivity } from '../hooks/useTeamActivity';
 import useAutoRefresh from '../hooks/useAutoRefresh';
 import { useUI } from '../hooks/useUI';
 import Avatar from '../components/ui/Avatar';
@@ -40,7 +41,8 @@ function buildNav(session, teams) {
         title: 'الإدارة',
         items: [
           { to: '/add-employee', icon: UserPlusIcon, label: 'إضافة موظف' },
-          { to: '/email-settings', icon: MailIcon, label: 'إعدادات البريد' },
+          { to: '/manage-teams', icon: TeamsIcon, label: 'إدارة الفرق' },
+          // { to: '/email-settings', icon: MailIcon, label: 'إعدادات البريد' },
           { to: '/archives', icon: ArchiveIcon, label: 'الأرشيف' },
         ],
       },
@@ -52,14 +54,19 @@ function buildNav(session, teams) {
       title: 'القائمة',
       items: t?.type === 'hasr'
         ? [{ to: `/hasr/${t.id}`, icon: HasrIcon, label: 'مشاريع الحصر' }]
-        : [{ to: '/team', icon: TeamsIcon, label: t ? teamLabel(t) : 'فريقي' }, { to: '/reports', icon: ReportsIcon, label: 'التقارير' }],
+        : [
+          { to: '/team', icon: TeamsIcon, label: 'الرئيسية', end: true },
+          { to: '/team/performance', icon: EngineersIcon, label: 'أداء الفريق' },
+          { to: '/reports', icon: ReportsIcon, label: 'التقارير' },
+          { to: '/notifications', icon: BellIcon, label: 'الإشعارات' },
+        ],
     }];
   }
   return [{
     title: 'القائمة',
     items: [
-      { to: '/my-tasks', icon: TasksIcon, label: 'مهامي' },
-      { to: '/reports', icon: ReportsIcon, label: 'تقاريري' },
+      { to: '/my-tasks', icon: TasksIcon, label: 'المشاريع' },
+      { to: '/reports', icon: ReportsIcon, label: 'التقارير' },
       // { to: '/notifications', icon: BellIcon, label: 'الإشعارات' },
     ],
   }];
@@ -72,6 +79,7 @@ export default function AppLayout() {
 const { unread: alertsUnread } = useEngineerAlerts();
 const unread = serverUnread + alertsUnread;
   const { unseen: deptUnseen } = useDeptActivity();
+  const { unseen: teamUnseen } = useTeamActivity();
   const { toast } = useUI();
   const nav = useNavigate();
   const { pathname } = useLocation();
@@ -80,7 +88,7 @@ const unread = serverUnread + alertsUnread;
   useAutoRefresh();
 
   // عدّاد الإشعارات: مدير القسم من نشاط المهندسين، والمهندس من إشعاراته
-  const badge = session.role === 'dept' ? deptUnseen : unread;
+  const badge = session.role === 'dept' ? deptUnseen : session.role === 'team' ? teamUnseen : unread;
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -186,7 +194,7 @@ const unread = serverUnread + alertsUnread;
 
           <div className="flex items-center gap-2 sm:gap-3">
             {session.role === 'dept' && <GlobalSearch />}
-            {(session.role === 'dept' || session.role === 'engineer') && (
+            {(session.role === 'dept' || session.role === 'engineer' || (session.role === 'team' && teams.find((team) => team.id === session.id)?.type !== 'hasr')) && (
               <button
                 onClick={() => nav('/notifications')}
                 className="relative grid h-11 w-11 place-items-center rounded-2xl border border-neutral-200 bg-white text-neutral-600 transition duration-300 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-700"

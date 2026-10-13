@@ -21,7 +21,7 @@ export default function TeamPerformanceCard({ team, rank, pct, done, total, brea
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const { running, delivered, won, lost, pending, decided, winPct } = breakdown;
+  const { running, delivered, won, lost, pending, winPct } = breakdown;
   const count = delivered.length;
 
   return (
@@ -51,7 +51,7 @@ export default function TeamPerformanceCard({ team, rank, pct, done, total, brea
         {[
           ['جارية', n(running), 'text-brand-600'],
           ['سلّمت', n(count), 'text-brand-700'],
-          ['نسبة الفوز', decided ? `${n(winPct)}%` : '—', 'text-brand-600'],
+          ['نسبة الفوز', delivered.length ? `${n(winPct)}%` : '—', 'text-brand-600'],
         ].map(([label, v, c]) => (
           <div key={label} className="rounded-xl bg-neutral-50 py-3 transition duration-300 hover:bg-brand-50">
             <p className={`text-2xl font-extrabold tabular-nums ${c}`}>{v}</p>

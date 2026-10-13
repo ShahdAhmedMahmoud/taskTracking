@@ -11,7 +11,7 @@ import {
   CalendarIcon, ShieldIcon, UserIcon, KeyIcon, LockIcon, EyeIcon, EyeOffIcon, LogoutIcon, CheckIcon,
   TeamsIcon, ProjectsIcon, SettingsIcon, MailIcon, ArchiveIcon,
 } from '../ui/Icons';
-import { mainTeams } from '../../utils/helpers';
+import { mainTeams, teamLabel } from '../../utils/helpers';
 import { collectProjects } from '../../utils/dashboardData';
 
 const PERMISSIONS = [

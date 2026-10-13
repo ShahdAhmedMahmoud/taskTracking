@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import ResponsibleDepartments from './engineer/ResponsibleDepartments';
+import ResponsibleDepartmentDropdown from './engineer/ResponsibleDepartmentDropdown';
 
 function Toggle({ on, onClick, onText, offText, tone = 'brand' }) {
   const onCls = { emerald: 'bg-brand-50 text-brand-700 ring-brand-300', brand: 'bg-brand-50 text-brand-700 ring-brand-300', indigo: 'bg-brand-50 text-brand-700 ring-brand-300' }[tone] || 'bg-brand-50 text-brand-700 ring-brand-300';
@@ -25,19 +27,20 @@ export default function TaskItem({ number, title, desc, state, onChange, label, 
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-3">
+      <div className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-9">
         <div><span className="label">الحالة</span><Toggle on={state.status} onClick={() => onChange('status', !state.status)} onText="☑ تم" offText="☐ لم يتم" /></div>
         <div><span className="label">المراجعة</span><Toggle on={state.review} tone="brand" onClick={() => onChange('review', !state.review)} onText="☑ روجعت" offText="☐ لم تراجع" /></div>
         <div><span className="label">ينطبق؟</span><Toggle on={state.applicable} onClick={() => onChange('applicable', !state.applicable)} onText="✓ أساسي" offText="غير أساسي" /></div>
-        <div className="w-full sm:w-40">
+        <div className="min-w-0">
           <span className="label">{label('dueDate', 'ميعاد الانتهاء')}</span>
           <input type="date" className="input" value={state.dueDate || ''} onChange={(e) => onChange('dueDate', e.target.value)} />
         </div>
-        <div className="w-full sm:w-40">
-          <span className="label">{label('department', 'القسم المسؤول')}</span>
-          <input className="input" defaultValue={state.department || ''} placeholder="اسم القسم" onBlur={(e) => e.target.value !== state.department && onChange('department', e.target.value)} />
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1 xl:col-span-2">
+          <span className="label">الفريق المسؤول</span>
+          <ResponsibleDepartments value={state.team || ''} onChange={(value) => onChange('team', value)} />
         </div>
-        <div className="min-w-[200px] flex-1">
+        {/* */}
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1 xl:col-span-1">
           <span className="label">{label('notes', 'ملاحظات')}</span>
           <input className="input" defaultValue={state.notes || ''} placeholder="اكتبي ملاحظتك هنا" onBlur={(e) => e.target.value !== state.notes && onChange('notes', e.target.value)} />
         </div>

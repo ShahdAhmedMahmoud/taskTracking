@@ -218,18 +218,6 @@ const deadlinePill = (k) => (k < 0
   ? 'bg-rose-50 text-rose-600 ring-rose-200'
   : k <= 3 ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-slate-50 text-slate-500 ring-slate-200');
 
-const rtf = new Intl.RelativeTimeFormat('ar-EG', { numeric: 'auto' });
-const ago = (d) => {
-  if (!d) return 'لم يُحفظ بعد';
-  const t = new Date(d).getTime();
-  if (Number.isNaN(t)) return 'لم يُحفظ بعد';
-  const s = Math.round((t - Date.now()) / 1000);
-  const a = Math.abs(s);
-  if (a < 60) return 'آخر تحديث الآن';
-  const [div, unit] = a < 3600 ? [60, 'minute'] : a < 86400 ? [3600, 'hour'] : a < 2592000 ? [86400, 'day'] : a < 31536000 ? [2592000, 'month'] : [31536000, 'year'];
-  return `آخر تحديث ${rtf.format(Math.round(s / div), unit)}`;
-};
-
 const PhoneIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
     <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" />
@@ -373,7 +361,6 @@ export default function EngineerTile({ eng, team, m, delay = 0, ready = true, va
       </div>
 
       <div className="mt-4 flex items-center gap-2">
-        <p className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-400">{ago(m.lastSaved)}</p>
         <Contact eng={eng} />
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-400 ring-1 ring-slate-200 transition duration-300 group-hover/eng:-translate-x-1 group-hover/eng:bg-brand-600 group-hover/eng:text-white group-hover/eng:ring-brand-600" aria-hidden="true">
           <ArrowIcon className="h-4 w-4" />

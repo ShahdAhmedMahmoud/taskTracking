@@ -83,11 +83,12 @@ export const stateOf = (p) => {
 
 const withRates = (c) => {
   const decided = c.won + c.lost;
+  const delivered = c.pending + decided;
   return {
     ...c,
-    delivered: c.pending + decided,
+    delivered,
     decided,
-    winPct: decided ? Math.round((c.won / decided) * 100) : 0,
+    winPct: delivered ? Math.round((c.won / delivered) * 100) : 0,
   };
 };
 

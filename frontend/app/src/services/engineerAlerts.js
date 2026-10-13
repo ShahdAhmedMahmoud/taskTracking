@@ -3,13 +3,15 @@ import { daysLeft, n } from '../utils/dashboardData';
 import { taskId, taskName, isTemplateTask } from '../utils/taskTemplates';
 
 /**
- * تنبيهات المهندس (من غير أي تعديل في الـ backend):
+ * تنبيهات المهندس محليًا، إلى أن تُصدرها خدمة الإشعارات على الخادم:
  *  1) مواعيد قربت: تسليم مشروع أو نهاية مهمة باقي عليها يوم واحد أو أقل (أو متأخرة)
- *  2) مدير القسم / مدير الفريق: أضاف مشروع للمهندس، أو كتب ملحوظة على مشروعه
+ *  2) مدير القسم / مدير الفريق: أضاف مشروعًا أو كتب ملحوظة
+ *  3) فريق الحصر: أكمل حصر مشروع المهندس
  *
  * بتعتمد على علامات بتتكتب جوه المشروع نفسه:
  *   createdBy / createdByRole / createdAt      ← لما حد يضيف مشروع
  *   noteBy / noteByRole / noteAt               ← لما حد يكتب ملحوظة المشروع
+ *   حالة hasrDone في سجل الحصر                  ← عند اكتمال الحصر
  */
 const KEY = (id) => `tender-eng-alerts:v1:${id}`;
 const WINDOW_DAYS = 1; // التنبيه لما يفضل يوم أو أقل
@@ -86,13 +88,13 @@ function buildDeadlines(projects, tasks) {
 }
 
 /* ---------- بيتنادى مع كل جلب لبيانات المهندس ---------- */
-export function processEngineerData(data, tasks = []) {
+export function processEngineerData(data, tasks = [], hasrItems = []) {
   if (!engId || !data) return;
   const projects = Array.isArray(data.projects) ? data.projects : [];
   deadlines = buildDeadlines(projects, tasks);
 
   const first = !persisted.known;                       // أول مرة: نعمل baseline من غير ما نغرق المهندس بإشعارات قديمة
-  const known = persisted.known || { projectIds: [], noteAt: {} };
+  const known = persisted.known || { projectIds: [], noteAt: {}, hasrDone: {} };
   const recent = (iso) => iso && Date.now() - new Date(iso).getTime() < 3 * 86400000;
   const fresh = [];
 
@@ -113,11 +115,28 @@ export function processEngineerData(data, tasks = []) {
     }
   });
 
+  const projectBySyncId = new Map(projects.map((p) => [`sync_${p.id}`, p]));
+  const hasrDone = {};
+  (Array.isArray(hasrItems) ? hasrItems : []).forEach((item) => {
+    const project = projectBySyncId.get(item.id);
+    if (!project) return;
+    hasrDone[project.id] = !!item.hasrDone;
+    if (item.hasrDone && known.hasrDone?.[project.id] !== true) {
+      const at = new Date().toISOString();
+      fresh.push({
+        id: `hasr_done:${project.id}:${at}`, kind: 'hasr_done', level: 'success', at, projectId: project.id,
+        title: `اكتمل الحصر لمشروع «${project.name || 'بدون اسم'}»`,
+        message: 'تم تسجيل اكتمال الحصر بواسطة فريق الحصر.',
+      });
+    }
+  });
+
   const have = new Set(persisted.events.map((e) => e.id));
   persisted.events = [...fresh.filter((e) => !have.has(e.id)), ...persisted.events].slice(0, 100);
   persisted.known = {
     projectIds: projects.map((p) => p.id),
     noteAt: Object.fromEntries(projects.filter((p) => p.noteAt).map((p) => [p.id, p.noteAt])),
+    hasrDone,
   };
 
   const alive = new Set([...deadlines, ...persisted.events].map((a) => a.id));

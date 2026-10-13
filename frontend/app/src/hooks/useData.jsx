@@ -75,6 +75,28 @@ export function DataProvider({ children }) {
     setTeams((ts) => ts.map((t) => ({ ...t, engineers: t.engineers.map((e) => (e.id === engId ? { ...e, ...patch } : e)) })));
   }, []);
 
+  const saveEngineerProfile = useCallback(async (engId, patch) => {
+    const next = structuredClone(teamsRef.current);
+    let found = false;
+    next.forEach((team) => {
+      team.engineers = (team.engineers || []).map((engineer) => {
+        if (engineer.id !== engId) return engineer;
+        found = true;
+        return { ...engineer, ...patch };
+      });
+    });
+    if (!found) { toast('error', 'تعذّر العثور على بيانات المهندس'); return false; }
+    try {
+      await saveRoster(next);
+      setTeams(next);
+      toast('success', 'تم حفظ بيانات البروفايل والصورة');
+      return true;
+    } catch (e) {
+      toast('error', 'فشل حفظ البروفايل: ' + e.message, 5000);
+      return false;
+    }
+  }, [toast]);
+
   /* ---------- engineers ---------- */
   const loadEngineer = useCallback(async (id, force) => {
     if (engRef.current[id] && !force) return engRef.current[id];
@@ -139,11 +161,11 @@ export function DataProvider({ children }) {
         data.projects.forEach((p) => {
           const id = 'sync_' + p.id;
           const index = list.findIndex((x) => x.id === id);
-          if (index < 0 && !p.hasrSynced) {
+          if (index < 0) {
             list.push({ id, name: p.name || 'مشروع بدون اسم', deliveryDate: p.deliveryDate || '', addedBy: eng?.name || '', hasWork: null, hasrDueDate: '', hasrDone: false, hasrNotes: '', projectNote: p.note || '' });
             hasrChanged = true;
-          } else if (index >= 0 && p.note && list[index].projectNote !== p.note) {
-            list[index] = { ...list[index], projectNote: p.note };
+          } else if (index >= 0 && (list[index].projectNote || '') !== (p.note || '')) {
+            list[index] = { ...list[index], projectNote: p.note || '' };
             hasrChanged = true;
           }
           if (!p.hasrSynced) synced.add(p.id);
@@ -223,7 +245,7 @@ export function DataProvider({ children }) {
   return (
     <DataCtx.Provider value={{
       status, init, teams, tasks, config, setConfig, deptManager, engineers, hasr, dirty,
-      fieldLabel, outcomeLabel, reloadRoster, updateTeams, patchEngineerInfo,
+      fieldLabel, outcomeLabel, reloadRoster, updateTeams, patchEngineerInfo, saveEngineerProfile,
       loadEngineer, loadMany, mutate, saveEngineer, archiveProject, createEngineer, deleteEngineer,
       loadHasr, saveHasr, loadScoped, refreshFor,
     }}>

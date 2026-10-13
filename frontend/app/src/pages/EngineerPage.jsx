@@ -94,7 +94,8 @@ export default function EngineerPage() {
   const running = projects.filter((p) => !p.finished).length;
   const won = projects.filter((p) => stateOf(p) === 'won').length;
   const lost = projects.filter((p) => stateOf(p) === 'lost').length;
-  const winPct = won + lost ? `${n(Math.round((won / (won + lost)) * 100))}%` : '—';
+  const delivered = projects.filter((p) => p.finished).length;
+  const winPct = delivered ? `${n(Math.round((won / delivered) * 100))}%` : '—';
 
   /* ---------- الفلتر ---------- */
   const lab = (k) => (k === 'won' || k === 'lost' ? outcomeLabel(k, STATES[k].label) : STATES[k].label);

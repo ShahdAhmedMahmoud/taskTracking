@@ -76,8 +76,17 @@ export function diffEngineer(prev, next, { taskName, lab }) {
     if (a.o !== b.o) add('outcome', `حدّد نتيجة المشروع: ${b.o === 'won' ? lab('won') : b.o === 'lost' ? lab('lost') : 'معلق'}`);
 
     /* الجولات */
-    const prevR = new Map(a.r.map(parseRound).map((r) => [r.key, r]));
-    b.r.map(parseRound).forEach((r) => {
+    // The snapshot is persisted in localStorage and may come from an older UI
+    // version that did not include rounds, tasks, or custom-task maps.
+    const previousRounds = Array.isArray(a.r) ? a.r : [];
+    const nextRounds = Array.isArray(b.r) ? b.r : [];
+    const previousTasks = a.t && typeof a.t === 'object' ? a.t : {};
+    const nextTasks = b.t && typeof b.t === 'object' ? b.t : {};
+    const previousCustom = a.c && typeof a.c === 'object' ? a.c : {};
+    const nextCustom = b.c && typeof b.c === 'object' ? b.c : {};
+
+    const prevR = new Map(previousRounds.map(parseRound).map((r) => [r.key, r]));
+    nextRounds.map(parseRound).forEach((r) => {
       const old = prevR.get(r.key);
       if (!old) add('round_added', `أضاف جولة «${r.title || 'بدون اسم'}»`);
       else if (!old.done && r.done) add('round_done', `سلّم جولة «${r.title || 'بدون اسم'}»`);
@@ -85,8 +94,8 @@ export function diffEngineer(prev, next, { taskName, lab }) {
 
     /* المهام القياسية */
     const done = []; const undone = []; const review = []; const na = []; const edit = [];
-    Object.keys(b.t).forEach((tid) => {
-      const x = a.t[tid]; const y = b.t[tid];
+    Object.keys(nextTasks).forEach((tid) => {
+      const x = previousTasks[tid]; const y = nextTasks[tid];
       if (!x || x === y) return; // مهمة جديدة من الإعدادات مش action للمهندس
       const p = parseTask(x); const q = parseTask(y); const name = taskName(tid);
       if (!p.st && q.st) done.push(name);
@@ -103,8 +112,8 @@ export function diffEngineer(prev, next, { taskName, lab }) {
 
     /* المهام المخصصة */
     const cAdd = []; const cDel = []; const cDone = [];
-    new Set([...Object.keys(a.c), ...Object.keys(b.c)]).forEach((k) => {
-      const x = a.c[k]; const y = b.c[k];
+    new Set([...Object.keys(previousCustom), ...Object.keys(nextCustom)]).forEach((k) => {
+      const x = previousCustom[k]; const y = nextCustom[k];
       if (!x && y) cAdd.push(y.split(SEP)[0] || 'مهمة');
       else if (x && !y) cDel.push(x.split(SEP)[0] || 'مهمة');
       else if (x !== y) {
@@ -160,6 +169,7 @@ const WINDOW = 10 * 60 * 1000;
 export function mergeEvents(cur, fresh, cap = 300) {
   const out = [...cur];
   fresh.forEach((ev) => {
+    if (out.some((item) => item.id === ev.id)) return;
     const i = LIST_KINDS.has(ev.kind)
       ? out.findIndex((x) => x.actorId === ev.actorId && x.projectId === ev.projectId && x.kind === ev.kind && ev.detectedAt - x.detectedAt < WINDOW)
       : -1;

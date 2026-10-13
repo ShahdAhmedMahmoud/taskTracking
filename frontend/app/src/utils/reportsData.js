@@ -27,8 +27,9 @@ export function projectCounts(items) {
     else if (s === 'lost') c.lost += 1;
     else c.pending += 1;
   });
+  c.delivered = c.finished;
   c.decided = c.won + c.lost;
-  c.winPct = c.decided ? Math.round((c.won / c.decided) * 100) : null;
+  c.winPct = c.finished ? Math.round((c.won / c.finished) * 100) : null;
   return c;
 }
 

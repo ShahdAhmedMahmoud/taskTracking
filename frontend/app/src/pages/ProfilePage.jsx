@@ -134,7 +134,7 @@ function ManagerProfile() {
    ===================================================================== */
 function EngineerProfile() {
   const { session } = useAuth();
-  const { teams, engineers, patchEngineerInfo } = useData();
+  const { teams, engineers, saveEngineerProfile } = useData();
   const { toast } = useUI();
   const fileRef = useRef(null);
 
@@ -194,11 +194,15 @@ function EngineerProfile() {
     }
 
     setBusy(true);
-    patchEngineerInfo(session.id, payload);
-    setPreview(null);
-    setDirty(false);
-    setBusy(false);
-    toast('success', 'تم تحديث البيانات في الواجهة. الحفظ الدائم يحتاج ربط Backend.');
+    try {
+      const saved = await saveEngineerProfile(session.id, payload);
+      if (saved) {
+        setPreview(null);
+        setDirty(false);
+      }
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -261,7 +265,7 @@ function EngineerProfile() {
           <StatCard featured delay={0} to="/my-tasks" icon={<ProjectsIcon />} label="إجمالي مشاريعي" value={stats.total} hint={`${n(stats.delivered)} تم تسليمه`} />
           <StatCard delay={70} to="/my-tasks" icon={<ClockIcon />} label="جارية" value={stats.running} tone="sky" hint={stats.running ? `متوسط ${n(stats.avg)}%` : 'لا يوجد جاري'} />
           <StatCard delay={140} icon={<CheckIcon />} label="تم التسليم" value={stats.delivered} tone="brand" hint={`${n(stats.won)} فوز · ${n(stats.lost)} خسارة · ${n(stats.pending)} معلق`} />
-          <StatCard delay={210} icon={<TrophyIcon />} label="نسبة الفوز" value={stats.winPct} suffix="%" tone="amber" hint={stats.decided ? `من ${n(stats.decided)} نتيجة` : 'لا نتائج بعد'} />
+          <StatCard delay={210} icon={<TrophyIcon />} label="نسبة الفوز" value={stats.winPct} suffix="%" tone="amber" hint={stats.delivered ? `من ${n(stats.delivered)} مشروع تم تسليمه` : 'لا نتائج بعد'} />
         </div>
       )}
 
@@ -337,7 +341,7 @@ function EngineerProfile() {
       </div>
 
       <p className={`text-center text-xs text-neutral-400 transition duration-700 ${ready ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}>
-        التعديلات والصورة للمعاينة داخل الواجهة فقط؛ الحفظ الدائم ومشاركة الصورة يحتاجان Backend. الصور المسموحة: PNG / JPG / WEBP
+        تُحفظ بيانات البروفايل والصورة على الخادم بعد الضغط على «حفظ البروفايل». الصور المسموحة: PNG / JPG / WEBP
       </p>
     </div>
   );
